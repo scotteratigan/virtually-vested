@@ -1,5 +1,6 @@
 # Environment Variables #
 .env
+secret.json
 
 # Node Modules #
 node_modules/
