@@ -4,7 +4,8 @@ import API from '../utils/API';
 // import { Link } from 'react-router-dom';
 import { Col, Row, Container } from '../components/Grid';
 import { formatCash } from '../utils/misc';
-
+import SearchStocks from '../components/SearchStock/SearchStock';
+ 
 class Portfolio extends Component {
   state = {
     currentCash: 0,
@@ -12,13 +13,14 @@ class Portfolio extends Component {
     email: '',
     name: '',
     portfolioValue: 0,
-    tradeHistory: []
+    tradeHistory: [],
+    selectedStock: null // todo: determine data type
   };
-
+ 
   componentDidMount() {
     this.loadUserData();
   }
-
+ 
   loadUserData = () => {
     // todo: retry if db connection fails
     // todo: replace with a filter search when we have other users
@@ -32,7 +34,7 @@ class Portfolio extends Component {
         this.setState({ currentCash, startCash, email, name, portfolioValue, tradeHistory })
       }).catch(err => console.log(err));
   };
-
+ 
   render() {
     return (
       <Container fluid>
@@ -73,9 +75,10 @@ class Portfolio extends Component {
               )}
           </Col>
         </Row>
+        <SearchStocks selectedStock={this.state.selectedStock} />
       </Container>
     );
   }
 }
-
+ 
 export default Portfolio;
