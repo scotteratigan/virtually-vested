@@ -72,6 +72,7 @@ class Portfolio extends Component {
                     <tbody>
                       {this.state.tradeHistory.map(trade => (
                         <tr key={trade.date + trade.symbol + trade.type} className={trade.type === 'sell' ? 'bg-secondary' : 'bg-primary'} >
+                        <CollapseBtn>+</CollapseBtn>
                           <td>{trade.symbol}</td>
                           <td>{trade.name}</td>
                           <td>{trade.qty}</td>
