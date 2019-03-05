@@ -60,6 +60,7 @@ router.route('/daily/:symbol')
         // newSeries[key] = fixKeyNames(eRes.data['Time Series (Daily)'][key])
         newSeries.push({ name: key, ...fixKeyNames(eRes.data['Time Series (Daily)'][key]) });
       }
+      newSeries.reverse(); // reverse so that order is ascending
       // resObj.series = newSeries;
       console.log('Sending newSeries:', newSeries);
       res.send(newSeries);
