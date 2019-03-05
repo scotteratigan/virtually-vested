@@ -25,13 +25,13 @@ class SearchStocks extends Component {
 			// console.log('Getting URL:', apiURL);
 			axios.get(apiURL).then(res => {
 				// todo: don't update list user clicks on suggestion
+				console.log('res.data:', res.data);
 				this.setState({ tickerSearchResults: res.data });
 			});
 		}
 	}
 
 	render() {
-		console.log();
 		return (
 			<form className="search">
 				<div className="form-group">
@@ -49,7 +49,7 @@ class SearchStocks extends Component {
 					/>
 					<datalist id="companies">
 						{this.state.tickerSearchResults.length > 1 ? this.state.tickerSearchResults.map(company => (
-							<option value={company['1. symbol']} key={company['1. symbol']} onClick={() => alert('hell yeah')} />
+							<option value={company['symbol']} key={company['symbol']} />
 						)) : ''}
 					</datalist>
 					<button onClick={this.handleAddStockBtn} className="btn btn-success">Add Stock</button>
