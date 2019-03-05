@@ -9,10 +9,10 @@ const cachedSymbolQueries = {};
 // todo: add limit on number of cached queries
 
 // Matches with '/api/stock'
-router.route('/')
-  .get((req, res) => {res.send("IT WORKED")});
+// router.route('/')
+//   .get((req, res) => {res.send("IT WORKED")});
 
-
+// Matches with '/api/stock/return_symbols/t' where t is the user input
 router.route('/return_symbols/:search_text')
   .get((req, res) => {
     console.log(req.params.search_text);
@@ -34,6 +34,7 @@ router.route('/return_symbols/:search_text')
     }
   });
 
+// Matches with 'api/stock/quote/tsla' where tsla is the stock symbol
 router.route('/quote/:symbol')
   .get((req, res) => {
     const stockSymbol = req.params.symbol;
@@ -46,6 +47,7 @@ router.route('/quote/:symbol')
     });
   });
 
+  // Matches with 'api/stock/daily/tsla' where tsla is the stock symbol - response is large
 router.route('/daily/:symbol')
   .get((req, res) => {
     const stockSymbol = req.params.symbol;
@@ -76,14 +78,5 @@ function fixKeyNames(obj) {
   }
   return newObj;
 }
-
-// Matches with '/api/stock/symbol/:id'
-// router
-//   .route('/symbol/:id')
-//   .get((req, res) => {console.log('id is:', req.params.id)});
-
-// router
-//   .route('/')
-//   .get((req, res) => {console.log('ROUTE WAS HIT!')});
 
 module.exports = router;

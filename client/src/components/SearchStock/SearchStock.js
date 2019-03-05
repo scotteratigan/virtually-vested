@@ -11,7 +11,8 @@ class SearchStocks extends Component {
 
 	handleAddStockBtn = event => {
 		event.preventDefault();
-		alert('You selected: ' + this.state.searchTerm);
+		const searchSymbol = this.state.searchTerm.substring(0, this.state.searchTerm.indexOf('-') - 1);
+		alert('You selected: ' + searchSymbol);
 	}
 
 	handleKeyInput = async (event) => {
@@ -49,7 +50,7 @@ class SearchStocks extends Component {
 					/>
 					<datalist id="companies">
 						{this.state.tickerSearchResults.length > 1 ? this.state.tickerSearchResults.map(company => (
-							<option value={company['symbol']} key={company['symbol']} />
+							<option value={company.symbol + ' - ' + company.name} key={company.symbol} />
 						)) : ''}
 					</datalist>
 					<button onClick={this.handleAddStockBtn} className="btn btn-success">Add Stock</button>
