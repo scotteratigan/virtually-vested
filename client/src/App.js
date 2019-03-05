@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Portfolio from './pages/Portfolio';
-// import Detail from './pages/Detail';
 import NoMatch from './pages/NoMatch';
 import Nav from './components/Nav';
+import History from './components/DailyHistory/DailyHistory'
 
 class App extends Component {
   state = {
-    
+
   }
 
   render() {
@@ -18,6 +18,7 @@ class App extends Component {
           <Switch>
             <Route exact path='/' component={Portfolio} />
             <Route exact path='/portfolio' component={Portfolio} />
+            <Route exact path='/history' component={History} />
             {/* <Route exact path='/books/:id' component={Detail} /> */}
             <Route component={NoMatch} />
           </Switch>

@@ -47,21 +47,22 @@ router.route('/quote/:symbol')
     });
   });
 
-  // Matches with 'api/stock/daily/tsla' where tsla is the stock symbol - response is large
+// Matches with 'api/stock/daily/tsla' where tsla is the stock symbol - response is large
 router.route('/daily/:symbol')
   .get((req, res) => {
     const stockSymbol = req.params.symbol;
     const externalURL = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=${stockSymbol}&apikey=${ALPHAVANTAGE_API_KEY}`;
     axios.get(externalURL).then(eRes => {
       const resObj = {}; // new obj to return to client
-      resObj.metaData = fixKeyNames(eRes.data["Meta Data"]); // clean up metadata keys
-      const newSeries = {}; // new obj to hold series data
-      for(let key in eRes.data['Time Series (Daily)']) { // clean up keys in series data:
-        newSeries[key] = fixKeyNames(eRes.data['Time Series (Daily)'][key])
+      // resObj.metaData = fixKeyNames(eRes.data["Meta Data"]); // clean up metadata keys
+      const newSeries = []; // new arr to hold series data - need to convert to arr to display as graph later
+      for (let key in eRes.data['Time Series (Daily)']) { // clean up keys in series data:
+        // newSeries[key] = fixKeyNames(eRes.data['Time Series (Daily)'][key])
+        newSeries.push({ name: key, ...fixKeyNames(eRes.data['Time Series (Daily)'][key]) });
       }
-      resObj.series = newSeries;
-      let temp = eRes.data;
-      res.send(resObj);
+      // resObj.series = newSeries;
+      console.log('Sending newSeries:', newSeries);
+      res.send(newSeries);
     });
   });
 
@@ -71,7 +72,7 @@ function fixKeyNames(obj) {
   // "08. previous close" -> "previous close"
   // the key names change based on the number of keys present in the response! what?!
   const newObj = {};
-  for(let key in obj) {
+  for (let key in obj) {
     const firstSpace = key.indexOf(' ');
     const newKey = key.substr(firstSpace + 1);
     newObj[newKey] = obj[key];
