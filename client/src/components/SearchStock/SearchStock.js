@@ -18,13 +18,16 @@ class SearchStocks extends Component {
 		console.log(event.nativeEvent);
 		// when you type, nativeEvent is an InputEvent and has a data attribute
 		// when you click, nativeEvent is an Event and has type: input
+		const searchAPI = (event.nativeEvent.inputType === 'insertText');
 		await this.setState({ searchTerm: event.target.value });
-		const apiURL = `/api/stock/return_symbols/${this.state.searchTerm}`;
-		console.log('Getting URL:', apiURL);
-		axios.get(apiURL).then(res => {
-			// todo: don't update list user clicks on suggestion
-			this.setState({ tickerSearchResults: res.data });
-		});
+		if (searchAPI) {
+			const apiURL = `/api/stock/return_symbols/${this.state.searchTerm}`;
+			// console.log('Getting URL:', apiURL);
+			axios.get(apiURL).then(res => {
+				// todo: don't update list user clicks on suggestion
+				this.setState({ tickerSearchResults: res.data });
+			});
+		}
 	}
 
 	render() {
