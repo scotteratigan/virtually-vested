@@ -34,17 +34,34 @@ router.route('/return_symbols/:search_text')
     }
   });
 
-  router.route('/quote/:symbol')
-    .get((req, res) => {
-      const stockSymbol = req.params.symbol;
-      const externalURL = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stockSymbol}&apikey=${ALPHAVANTAGE_API_KEY}`;
-      axios.get(externalURL).then(eRes => {
-        let quote = eRes.data['Global Quote'];
-        quote = fixKeyNames(quote);
-        console.log('Sending data:', quote);
-        res.send(quote);
-      });
+router.route('/quote/:symbol')
+  .get((req, res) => {
+    const stockSymbol = req.params.symbol;
+    const externalURL = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stockSymbol}&apikey=${ALPHAVANTAGE_API_KEY}`;
+    axios.get(externalURL).then(eRes => {
+      let quote = eRes.data['Global Quote'];
+      quote = fixKeyNames(quote);
+      console.log('Sending data:', quote);
+      res.send(quote);
     });
+  });
+
+router.route('/daily/:symbol')
+  .get((req, res) => {
+    const stockSymbol = req.params.symbol;
+    const externalURL = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=${stockSymbol}&apikey=${ALPHAVANTAGE_API_KEY}`;
+    axios.get(externalURL).then(eRes => {
+      const resObj = {}; // new obj to return to client
+      resObj.metaData = fixKeyNames(eRes.data["Meta Data"]); // clean up metadata keys
+      const newSeries = {}; // new obj to hold series data
+      for(let key in eRes.data['Time Series (Daily)']) { // clean up keys in series data:
+        newSeries[key] = fixKeyNames(eRes.data['Time Series (Daily)'][key])
+      }
+      resObj.series = newSeries;
+      let temp = eRes.data;
+      res.send(resObj);
+    });
+  });
 
 function fixKeyNames(obj) {
   // strips first space and all preceeding chars from key names. Doing this b/c keys are numbered:
