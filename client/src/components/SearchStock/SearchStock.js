@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import { ALPHAVANTAGE_API_KEY } from '../../utils/secret.json';
 
 //todo - add company name w/ special delimiter char
 
@@ -20,10 +19,11 @@ class SearchStocks extends Component {
 		// when you type, nativeEvent is an InputEvent and has a data attribute
 		// when you click, nativeEvent is an Event and has type: input
 		await this.setState({ searchTerm: event.target.value });
-		const searchURL = `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${this.state.searchTerm}&apikey=${ALPHAVANTAGE_API_KEY}`;
-		axios.get(searchURL).then(res => {
+		const apiURL = `/api/stock/return_symbols/${this.state.searchTerm}`;
+		console.log('Getting URL:', apiURL);
+		axios.get(apiURL).then(res => {
 			// todo: don't update list user clicks on suggestion
-			this.setState({ tickerSearchResults: res.data.bestMatches });
+			this.setState({ tickerSearchResults: res.data });
 		});
 	}
 

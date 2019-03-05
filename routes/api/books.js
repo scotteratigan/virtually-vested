@@ -1,16 +1,21 @@
+/*
 const router = require('express').Router();
-const booksController = require('../../controllers/userController');
+const userController = require('../../controllers/userController');
+
+console.log('Book routes loaded');
 
 // Matches with '/api/books'
+// THIS IS WHAT MAKES THE MAGIC HAPPEN:
 router.route('/')
-  .get(booksController.findAll)
-  .post(booksController.create);
+  .get(userController.findAll)
+  .post(userController.create);
 
 // Matches with '/api/books/:id'
 router
   .route('/:id')
-  .get(booksController.findById)
-  .put(booksController.update)
-  .delete(booksController.remove);
+  .get(userController.findById)
+  .put(userController.update)
+  .delete(userController.remove);
 
 module.exports = router;
+*/
