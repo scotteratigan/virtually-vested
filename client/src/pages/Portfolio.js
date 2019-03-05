@@ -5,6 +5,8 @@ import API from '../utils/API';
 import { Col, Row, Container } from '../components/Grid';
 import { formatCash } from '../utils/misc';
 import SearchStocks from '../components/SearchStock/SearchStock';
+import CollapseBtn from '../components/CollapseBtn';
+import Moment from 'react-moment';
  
 class Portfolio extends Component {
   state = {
@@ -45,37 +47,54 @@ class Portfolio extends Component {
               <h3>{this.state.name}</h3>
               <div className="">Starting Cash: {formatCash(this.state.startCash)}</div>
               <div>Cash on Hand: {formatCash(this.state.currentCash)}</div>
+              <div>Total Gain/Loss: {formatCash(this.state.currentCash-this.state.startCash)}</div>
+              <div>% Total Gain/Loss: {(((this.state.currentCash-this.state.startCash)/this.state.startCash)*100).toFixed(2)}%</div>
+              {/* Rank state data goes below */}
+              <div>Rank: {"X"} of {"X"}</div>
             </Jumbotron>
-            <div><h3 className='text-center'>Trade History</h3></div>
-            {this.state.tradeHistory.length ? (
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th scope="col">Type</th>
-                    <th scope="col" className='text-center'>Symbol</th>
-                    <th scope="col" className='text-center'>Qty</th>
-                    <th scope="col" className='text-right'>$ / ea</th>
-                    <th scope="col" className='text-right'>Total Net</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {this.state.tradeHistory.map(trade => (
-                    <tr key={trade.date + trade.symbol + trade.type} className={trade.type === 'sell' ? 'bg-secondary' : 'bg-primary'} >
-                      <td>{trade.type}</td>
-                      <td className='text-center'>{trade.symbol}</td>
-                      <td className='text-center'>{trade.qty}</td>
-                      <td className='text-right'>{formatCash(trade.total / trade.qty)}</td>
-                      <td className='text-right'>{formatCash(trade.total)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            ) : (
-                <h3>Loading data...</h3>
-              )}
+              <SearchStocks selectedStock={this.state.selectedStock} />
+                <div><h3 className='text-center'>Trade History</h3></div>
+                {this.state.tradeHistory.length ? (
+                  <table className="table">
+                    <thead>
+                      <tr>
+                        <th scope="col" className='text-center'>Symbol</th>
+                        <th scope="col" className='text-center'>Name</th>
+                        <th scope="col" className='text-center'>Qty</th>
+                        <th scope="col" className='text-right'>Current Price per Share</th>
+                        <th scope="col" className='text-right'>Current Value</th>
+                        <th scope="col" className='text-right'>Cost Basis per Share</th>
+                        <th scope="col" className='text-right'>Total Cost Basis</th>
+                        <th scope="col" className='text-right'>Total Gain/Loss</th>
+                        <th scope="col" className='text-right'>% Total Gain/Loss</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {this.state.tradeHistory.map(trade => (
+                        <tr key={trade.date + trade.symbol + trade.type} className={trade.type === 'sell' ? 'bg-secondary' : 'bg-primary'} >
+                        <CollapseBtn>+</CollapseBtn>
+                          <td>{trade.symbol}</td>
+                          <td>{trade.name}</td>
+                          <td>{trade.qty}</td>
+                          <td>{'API data'}</td>
+                          <td>{'calc using API data'}</td>
+                          <td className='text-center'>{formatCash(trade.price)}</td>
+                          <td className='text-right'>{formatCash(trade.price * trade.qty)}</td>
+                          <td>{'calc using API data'}</td>
+                          <td>{'calc using API data'}</td>
+
+
+
+                          {/* <td className='text-right'><Moment format='MM-DD-YYYY HH:mm a'>{trade.date}</Moment></td> */}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                ) : (
+                    <h3>Loading data...</h3>
+                  )}
           </Col>
         </Row>
-        <SearchStocks selectedStock={this.state.selectedStock} />
       </Container>
     );
   }
