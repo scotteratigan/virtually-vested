@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import { ALPHAVANTAGE_API_KEY } from '../../utils/secret.json';
 
 //todo - add company name w/ special delimiter char
 
@@ -12,23 +11,28 @@ class SearchStocks extends Component {
 
 	handleAddStockBtn = event => {
 		event.preventDefault();
-		alert('You selected: ' + this.state.searchTerm);
+		const searchSymbol = this.state.searchTerm.substring(0, this.state.searchTerm.indexOf('-') - 1);
+		alert('You selected: ' + searchSymbol);
 	}
 
 	handleKeyInput = async (event) => {
 		console.log(event.nativeEvent);
 		// when you type, nativeEvent is an InputEvent and has a data attribute
 		// when you click, nativeEvent is an Event and has type: input
+		const searchAPI = (event.nativeEvent.inputType === 'insertText');
 		await this.setState({ searchTerm: event.target.value });
-		const searchURL = `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${this.state.searchTerm}&apikey=${ALPHAVANTAGE_API_KEY}`;
-		axios.get(searchURL).then(res => {
-			// todo: don't update list user clicks on suggestion
-			this.setState({ tickerSearchResults: res.data.bestMatches });
-		});
+		if (searchAPI) {
+			const apiURL = `/api/stock/return_symbols/${this.state.searchTerm}`;
+			// console.log('Getting URL:', apiURL);
+			axios.get(apiURL).then(res => {
+				// todo: don't update list user clicks on suggestion
+				console.log('res.data:', res.data);
+				this.setState({ tickerSearchResults: res.data });
+			});
+		}
 	}
 
 	render() {
-		console.log();
 		return (
 			<form className="search">
 				<div className="form-group">
@@ -46,7 +50,7 @@ class SearchStocks extends Component {
 					/>
 					<datalist id="companies">
 						{this.state.tickerSearchResults.length > 1 ? this.state.tickerSearchResults.map(company => (
-							<option value={company['1. symbol']} key={company['1. symbol']} onClick={() => alert('hell yeah')} />
+							<option value={company.symbol + ' - ' + company.name} key={company.symbol} />
 						)) : ''}
 					</datalist>
 					<button onClick={this.handleAddStockBtn} className="btn btn-success">Add Stock</button>

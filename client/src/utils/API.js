@@ -3,8 +3,13 @@ import axios from 'axios';
 export default {
   // get user. Todo: update when we have more users
   getUser: function () {
-    return axios.get('/api/books');
+    return axios.get('/api/user');
   },
+  stockDailyHistory: function (symbol) {
+    return axios.get(`/api/stock/daily/${symbol}`);
+  }
+
+  /*,
   // Gets all books
   getBooks: function () {
     return axios.get('/api/books');
@@ -20,5 +25,5 @@ export default {
   // Saves a book to the database
   saveBook: function (bookData) {
     return axios.post('/api/books', bookData);
-  }
+  }*/
 };
