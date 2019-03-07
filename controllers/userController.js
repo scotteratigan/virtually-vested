@@ -1,4 +1,8 @@
+/* eslint-disable no-console */
 const db = require('../models');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+const jwt = require('jsonwebtoken');
 
 // Defining methods for the userController
 module.exports = {
@@ -15,11 +19,23 @@ module.exports = {
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   },
+  // findByUsername: function (req, res) {
+
+  //   // db.User.findOne({username})
+  // },
   create: function (req, res) {
-    db.User
-      .create(req.body)
-      .then(dbModel => res.json(dbModel))
-      .catch(err => res.status(422).json(err));
+    console.log('ATHENTICATION REQUEST RECEIVED');
+    const { username, password } = req.body;
+    console.log('username:', username, 'password:', password);
+    bcrypt.hash(password, saltRounds, (err, hash) => {
+      db.User
+        .create({ username: username, passHash: hash })
+        .then(dbModel => {
+          // const token = generateWebToken(username);
+          res.json(dbModel);
+        })
+        .catch(err => res.status(422).json(err));
+    });
   },
   update: function (req, res) {
     db.User
@@ -35,3 +51,19 @@ module.exports = {
       .catch(err => res.status(422).json(err));
   }
 };
+
+/*function generateWebToken(username) {
+  // generate JWT here and send to client:
+  const signOptions = {
+    issuer: 'VirtuallyVested',
+    subject: 'Users',
+    audience: 'VirtuallyVested Website',
+    expiresIn: '12h',
+    algorithm: 'HS256'
+  };
+  const privateKEY = process.env.PRIVATE;
+  // console.log('privateKey:', privateKEY);
+  const token = jwt.sign({ username }, privateKEY, signOptions);
+  console.log(token);
+  return token;
+}*/
