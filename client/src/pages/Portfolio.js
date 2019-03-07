@@ -5,8 +5,10 @@ import API from '../utils/API';
 import { Col, Row, Container } from '../components/Grid';
 import { formatCash } from '../utils/misc';
 import SearchStocks from '../components/SearchStock/SearchStock';
-import CollapseBtn from '../components/CollapseBtn';
+import ActionBtns from '../components/ActionBtns';
+import Counter from '../components/Counter';
 import Moment from 'react-moment';
+import Button from 'react-bootstrap/Button';
  
 class Portfolio extends Component {
   state = {
@@ -31,7 +33,7 @@ class Portfolio extends Component {
         const { startCash, email, name, portfolioValue, tradeHistory } = res.data[0];
         console.log(res.data[0]);
         // Calculate the net of all trades:
-        const transactionsNet = tradeHistory.reduce((net, trade) => (net + trade.total), 0);
+        const transactionsNet = tradeHistory.reduce((net, trade) => (net + trade.price), 0);
         const currentCash = startCash + transactionsNet;
         this.setState({ currentCash, startCash, email, name, portfolioValue, tradeHistory })
       }).catch(err => console.log(err));
@@ -58,8 +60,7 @@ class Portfolio extends Component {
                   <table className="table">
                     <thead>
                       <tr>
-                        <th scope="col" className='text-center'>Symbol</th>
-                        <th scope="col" className='text-center'>Name</th>
+                        <th scope="col" className='text-center'>Symbol/Name</th>
                         <th scope="col" className='text-center'>Qty</th>
                         <th scope="col" className='text-right'>Current Price per Share</th>
                         <th scope="col" className='text-right'>Current Value</th>
@@ -67,14 +68,15 @@ class Portfolio extends Component {
                         <th scope="col" className='text-right'>Total Cost Basis</th>
                         <th scope="col" className='text-right'>Total Gain/Loss</th>
                         <th scope="col" className='text-right'>% Total Gain/Loss</th>
+                        <th scope="col" className='text-center'>Action</th>
+                        <th scope="col" className='text-right'>Impact</th>
                       </tr>
                     </thead>
                     <tbody>
                       {this.state.tradeHistory.map(trade => (
-                        <tr key={trade.date + trade.symbol + trade.type} className={trade.type === 'sell' ? 'bg-secondary' : 'bg-primary'} >
-                        <CollapseBtn>+</CollapseBtn>
-                          <td>{trade.symbol}</td>
-                          <td>{trade.name}</td>
+                        <tr key={trade.date + trade.symbol + trade.type} className={'list-group-item-action'} >
+                          <td style={{ display: 'block' }}>{trade.symbol}</td>
+                          <td style={{ display: 'block' }}><a href={'link to company website from API call here'}>{trade.name}</a></td>
                           <td>{trade.qty}</td>
                           <td>{'API data'}</td>
                           <td>{'calc using API data'}</td>
@@ -82,22 +84,25 @@ class Portfolio extends Component {
                           <td className='text-right'>{formatCash(trade.price * trade.qty)}</td>
                           <td>{'calc using API data'}</td>
                           <td>{'calc using API data'}</td>
-
-
+                          <td style={{ display: 'block' }}><ActionBtns /></td>
+                          <td style={{ display: 'block' }}><Counter /></td>
+                          
 
                           {/* <td className='text-right'><Moment format='MM-DD-YYYY HH:mm a'>{trade.date}</Moment></td> */}
                         </tr>
+                        
                       ))}
                     </tbody>
                   </table>
                 ) : (
                     <h3>Loading data...</h3>
                   )}
+                  <Button variant='outline-success' size='lg' block style={{ margin: '1rem'}}>Make Trade!</Button>
           </Col>
         </Row>
       </Container>
     );
-  }
+  } 
 }
  
 export default Portfolio;
