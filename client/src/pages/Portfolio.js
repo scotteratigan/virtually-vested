@@ -7,7 +7,7 @@ import { formatCash } from '../utils/misc';
 import SearchStocks from '../components/SearchStock/SearchStock';
 import ActionBtns from '../components/ActionBtns';
 import Counter from '../components/Counter';
-import Moment from 'react-moment';
+// import Moment from 'react-moment';
 import Button from 'react-bootstrap/Button';
  
 class Portfolio extends Component {

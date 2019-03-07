@@ -2,7 +2,7 @@
 const db = require('../models');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
-const jwt = require('jsonwebtoken');
+// const jwt = require('jsonwebtoken');
 
 // Defining methods for the userController
 module.exports = {

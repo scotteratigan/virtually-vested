@@ -23,18 +23,8 @@
     "axios": "^0.18.0",
     "bcrypt": "^3.0.4",
     "dotenv": "^6.2.0",
-    "eslint": "^5.15.1",
     "express": "^4.16.3",
     "if-env": "^1.0.4",
-    "jsonwebtoken": "^8.5.0",
-    "mdbreact": "^4.11.0",
-    "moment": "^2.24.0",
-    "mongoose": "^5.3.16",
-    "react-moment": "^0.8.4",
-    "simple-oauth2": "^2.2.1"
-    "bootstrap": "^4.3.1",
-    "eslint-plugin-react": "^7.12.4",
-    "react-bootstrap": "^1.0.0-beta.5",
-    "react-moment": "^0.8.4"
+    "mongoose": "^5.3.16"
   }
 }
