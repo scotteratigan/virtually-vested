@@ -6,12 +6,11 @@ import API from '../../utils/API';
 
 class DailyHistory extends PureComponent {
   state = {
-    symbol: 'MSFT',
+    symbol: this.props.symbol || 'MSFT',
     series: []
   }
   componentDidMount = async () => {
     const res = await API.stockDailyHistory(this.state.symbol);
-    // console.log('res.data', res.data);
     this.setState({ series: res.data });
   }
   render() {
