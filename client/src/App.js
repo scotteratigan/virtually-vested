@@ -8,6 +8,7 @@ import Portfolio from './pages/Portfolio';
 import TradeHistory from './pages/TradeHistory';
 import SignUp from './components/SignUp/SignUp';
 import API from './utils/API';
+import StockPriceLive from './components/StockPriceLive/StockPriceLive';
 
 class App extends Component {
   state = {
@@ -22,7 +23,7 @@ class App extends Component {
   }
 
   loadUserData = () => {
-    // todo: retry if db connection fails
+    // todo: retry if db connection fails - was happening often on home PC
     // todo: replace with a filter search when we have other users
     API.getUser()
       .then(res => {
@@ -43,16 +44,17 @@ class App extends Component {
       <Router>
         <>
           <Nav />
+          <StockPriceLive />
           <Switch>
             <Route exact path='/' component={Index} />
-            {/* <Route exact path='/portfolio' component={Portfolio} /> */}
+            {/* Need this funky routing to pass props. See:
+            https://tylermcginnis.com/react-router-pass-props-to-components/ */}
             <Route exact
               path='/portfolio'
               render={(props) => <Portfolio {...props}
                 transactions={this.state.transactions}
                 user={this.state.user} />}
             />
-            {/* <Route exact path='/trades' component={TradeHistory} /> */}
             <Route exact
               path='/trades'
               render={(props) => <TradeHistory {...props}

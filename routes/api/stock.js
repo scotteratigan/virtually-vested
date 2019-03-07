@@ -3,16 +3,15 @@ const axios = require('axios');
 
 require('dotenv').config();
 const ALPHAVANTAGE_API_KEY = process.env.ALPHAVANTAGE_API_KEY;
+const IEXAPIS_API_KEY = process.env.IEXAPIS_API_KEY;
 
 // global to hold search queries:
 const cachedSymbolQueries = {};
 // todo: add limit on number of cached queries
-
-// Matches with '/api/stock'
-// router.route('/')
-//   .get((req, res) => {res.send("IT WORKED")});
+let cachedStockQuotes = {};
 
 // Matches with '/api/stock/return_symbols/t' where t is the user input
+// This is the search route to look up stock symbols
 router.route('/return_symbols/:search_text')
   .get((req, res) => {
     console.log(req.params.search_text);
@@ -35,19 +34,51 @@ router.route('/return_symbols/:search_text')
   });
 
 // Matches with 'api/stock/quote/tsla' where tsla is the stock symbol
+// This route is now using the IEXCLOUD API
 router.route('/quote/:symbol')
   .get((req, res) => {
     const stockSymbol = req.params.symbol;
-    const externalURL = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stockSymbol}&apikey=${ALPHAVANTAGE_API_KEY}`;
-    axios.get(externalURL).then(eRes => {
-      let quote = eRes.data['Global Quote'];
-      quote = fixKeyNames(quote);
-      console.log('Sending data:', quote);
-      res.send(quote);
-    });
+    if (!cachedStockQuotes[stockSymbol]) {
+      cachedStockQuotes[stockSymbol] = { updateTime: 0 };
+    }
+    const stock = cachedStockQuotes[stockSymbol];
+    const currTime = Date.now(); // remember, this is in ms
+    const elapsedTime = currTime - stock.updateTime;
+    if (elapsedTime < 120000 && stock.price) { // if less than two minutes has passed, send the cached result
+      stock.cachedValueSent = true;
+      res.send(stock);
+      return;
+    }
+    // Otherwise, hit the external API:
+    const externalURL = `https://cloud.iexapis.com/beta/stock/${stockSymbol}/quote?token=${IEXAPIS_API_KEY}`;
+
+    // todo: implement actual throttle/queue
+    const randDelay = Math.floor(Math.random() * 100); // delay of 0 - 99 ms
+    setTimeout(() => {
+      axios.get(externalURL).then(eRes => {
+        const { data } = eRes;
+        stock.companyName = data.companyName;
+        stock.price = data.latestPrice;
+        stock.cachedValueSent = false;
+        stock.updateTime = Date.now();
+        res.send(stock);
+        return;
+      });
+    }, randDelay);
+
+
+    // Previous API:
+    // const externalURL = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stockSymbol}&apikey=${ALPHAVANTAGE_API_KEY}`;
+    // axios.get(externalURL).then(eRes => {
+    //   let quote = eRes.data['Global Quote'];
+    //   quote = fixKeyNames(quote);
+    //   console.log('Sending data:', quote);
+    //   res.send(quote);
+    // });
   });
 
 // Matches with 'api/stock/daily/tsla' where tsla is the stock symbol - response is large
+// todo: add caching of result, only need to query once per hour
 router.route('/daily/:symbol')
   .get((req, res) => {
     const stockSymbol = req.params.symbol;

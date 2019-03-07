@@ -3,4 +3,9 @@ function formatCash(pennies) {
   return (pennies / 100).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 }
 
-module.exports = { formatCash };
+function formatQuotedPrice(dollars) {
+  if (!dollars) return '';
+  return parseFloat(dollars).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+}
+
+module.exports = { formatCash, formatQuotedPrice };

@@ -9,6 +9,7 @@ import ActionBtns from '../components/ActionBtns';
 import Counter from '../components/Counter';
 // import Moment from 'react-moment';
 import Button from 'react-bootstrap/Button';
+import StockPriceLive from '../components/StockPriceLive/StockPriceLive';
 
 // todo: convert to stateless component? maybe...
 class Portfolio extends Component {
@@ -77,9 +78,10 @@ class Portfolio extends Component {
                   {this.props.transactions.map(trade => (
                     <tr key={trade._id} className={'list-group-item-action'} >
                       <td style={{ display: 'block' }}>{trade.tickerSymbol}</td>
-                      <td style={{ display: 'block' }}><a href={'link to company website from API call here'}>{trade.name}</a></td>
+                      <td style={{ display: 'block' }}><a href={'link to company website from API call here'}>link</a></td>
                       <td>{trade.quantity}</td>
-                      <td>{'API data'}</td>
+                      {console.log(trade.tickerSymbol)}
+                      <td><StockPriceLive symbol={trade.tickerSymbol} /></td>
                       <td>{'calc using API data'}</td>
                       <td className='text-center'>{formatCash(trade.centsTotal)}</td>
                       <td className='text-right'>formatCash(trade.price * trade.qty)</td>
