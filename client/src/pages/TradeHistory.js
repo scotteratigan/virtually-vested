@@ -1,11 +1,11 @@
 import React from 'react';
 
 const TradeHistory = () => {
-  return (
-    <div>
+    return (
+        <div>
       Todo: display history here.
-    </div>
-  );
+        </div>
+    );
 };
 
 export default TradeHistory;
