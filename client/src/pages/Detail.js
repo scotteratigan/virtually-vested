@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Col, Row, Container } from "../components/Grid";
 import Jumbotron from "../components/Jumbotron";
 import API from "../utils/API";
+import Footer from '../components/Footer';
 
 class Detail extends Component {
   state = {
@@ -43,6 +44,7 @@ class Detail extends Component {
             <Link to="/">← Back to Authors</Link>
           </Col>
         </Row>
+        <Footer />
       </Container>
     );
   }

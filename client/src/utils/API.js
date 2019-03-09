@@ -1,16 +1,16 @@
 import axios from 'axios';
 
 export default {
-  // get user. Todo: update when we have more users
-  getUser: function () {
-    return axios.get('/api/user');
-  },
-  stockDailyHistory: function (symbol) {
-    console.log('hitting the api route...');
-    return axios.get(`/api/stock/daily/${symbol}`);
-  }
+    // get user. Todo: update when we have more users
+    getUser: function () {
+        return axios.get('/api/user');
+    },
+    stockDailyHistory: function (symbol) {
+        console.log('hitting the api route...');
+        return axios.get(`/api/stock/daily/${symbol}`);
+    }
 
-  /*,
+    /*,
   // Gets all books
   getBooks: function () {
     return axios.get('/api/books');

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Container } from '../components/Grid';
 import Jumbotron from '../components/Jumbotron';
+import Footer from '../components/Footer';
 
 function NoMatch() {
     return (
@@ -14,6 +15,7 @@ function NoMatch() {
                 </h1>
                 <h4>Sometimes servers go up and down like the market. Please try again in a minte.</h4>
             </Jumbotron>
+            <Footer />
         </Container>
     );
 }
