@@ -1,0 +1,40 @@
+  .counter {
+    display: flex;
+    width: 110px;
+    height: 40px;
+  }
+  
+    .counter-action {
+      border: none;
+      font-size: 1em;
+      font-weight: bold;
+      color: #B0AEBA;
+      background-color: #DCDCDC;
+      display: block;
+      padding: 20px 20px;
+      cursor: pointer;
+      outline: none;
+    }
+  
+    .counter-action:hover {
+      color: #fff;
+    }
+  
+    .increment:hover {
+      background: #83D97C;
+    }
+  
+    .decrement:hover {
+      background: #EF5350;
+    }
+  
+    .counter-score {
+      flex-grow: 1;
+      text-align: center;
+      font-family: monospace;
+      font-size: 2em;
+      line-height: 1.5em;
+      max-width: 110px;
+      max-height: 40px;
+      margin: auto;
+    }

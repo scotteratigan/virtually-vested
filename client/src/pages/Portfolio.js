@@ -47,29 +47,29 @@ class Portfolio extends Component {
             <Jumbotron>
               <h1>Stock Portfolio</h1>
               <h3>{this.state.name}</h3>
-              <div className="">Starting Cash: {formatCash(this.state.startCash)}</div>
-              <div>Cash on Hand: {formatCash(this.state.currentCash)}</div>
-              <div>Total Gain/Loss: {formatCash(this.state.currentCash-this.state.startCash)}</div>
-              <div>% Total Gain/Loss: {(((this.state.currentCash-this.state.startCash)/this.state.startCash)*100).toFixed(2)}%</div>
+              <div className=""><text style={{ textDecoration: 'underline'}}>Starting Cash:</text> {formatCash(this.state.startCash)}</div>
+              <div><text style={{ textDecoration: 'underline'}}>Cash on Hand:</text> {formatCash(this.state.currentCash)}</div>
+              <div><text style={{ textDecoration: 'underline'}}>Total Gain/Loss:</text> {formatCash(this.state.currentCash-this.state.startCash)}</div>
+              <div><text style={{ textDecoration: 'underline'}}>% Total Gain/Loss:</text> {(((this.state.currentCash-this.state.startCash)/this.state.startCash)*100).toFixed(2)}%</div>
               {/* Rank state data goes below */}
-              <div>Rank: {"X"} of {"X"}</div>
+              <div><text style={{ textDecoration: 'underline'}}>Rank:</text> {"X"} of {"X"}</div>
             </Jumbotron>
               <SearchStocks selectedStock={this.state.selectedStock} />
-                <div><h3 className='text-center'>Trade History</h3></div>
-                {this.state.tradeHistory.length ? (
-                  <table className="table">
-                    <thead>
+                <div className='table-responsive' style={{ backgroundColor: '#5B45B9', color: 'white', width: '1022px', paddingTop: '5px' }}><h3 className='text-center'>Current Portfolio</h3></div>
+                {this.state.tradeHistory.length ? ( 
+                  <table className='table table-bordered table-hover table-sm'>
+                    <thead className='thead-dark'>
                       <tr>
-                        <th scope="col" className='text-center'>Symbol/Name</th>
+                        <th scope="col" className='text-center'>Symbol
+                        {'\n'}Company Name</th>
                         <th scope="col" className='text-center'>Qty</th>
-                        <th scope="col" className='text-right'>Current Price per Share</th>
+                        <th scope="col" className='text-right'>Current Price / Share</th>
                         <th scope="col" className='text-right'>Current Value</th>
                         <th scope="col" className='text-right'>Cost Basis per Share</th>
                         <th scope="col" className='text-right'>Total Cost Basis</th>
                         <th scope="col" className='text-right'>Total Gain/Loss</th>
                         <th scope="col" className='text-right'>% Total Gain/Loss</th>
-                        <th scope="col" className='text-center'>Action</th>
-                        <th scope="col" className='text-right'>Impact</th>
+                        <th scope="col" className='text-center'>Buy/Sell Action Selection & Estimated Impact</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -84,9 +84,14 @@ class Portfolio extends Component {
                           <td className='text-right'>{formatCash(trade.price * trade.qty)}</td>
                           <td>{'calc using API data'}</td>
                           <td>{'calc using API data'}</td>
+                          <div style={{ columnCount: 3 }}>
                           <td style={{ display: 'block' }}><ActionBtns /></td>
                           <td style={{ display: 'block' }}><Counter /></td>
-                          
+                          <td style={{ fontSize: '.75rem', display: 'block' }}>Est. Total Gain/Loss: {'calc using API data'}</td>
+                          <td style={{ fontSize: '.75rem', display: 'block' }}>Est. New Cash on Hand: {'calc using API data'}</td>
+                          <td style={{ fontSize: '.75rem', display: 'block' }}>Est. New Portfolio Value: {'calc using API data'}</td>
+                          <td style={{ fontSize: '.75rem', display: 'block' }}>Est. New Portfolio % Gain/Loss: {'calc using API data'}</td>
+                          </div>
 
                           {/* <td className='text-right'><Moment format='MM-DD-YYYY HH:mm a'>{trade.date}</Moment></td> */}
                         </tr>
