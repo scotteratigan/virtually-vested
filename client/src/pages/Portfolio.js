@@ -9,6 +9,8 @@ import ActionBtns from '../components/ActionBtns';
 import Counter from '../components/Counter';
 // import Moment from 'react-moment';
 import Button from 'react-bootstrap/Button';
+import Footer from '../components/Footer';
+import Logo from '../images/logo.png';
  
 class Portfolio extends Component {
   state = {
@@ -45,6 +47,7 @@ class Portfolio extends Component {
         <Row>
           <Col size='md-6 sm-12'>
             <Jumbotron>
+              <img src={Logo} />
               <h1>Stock Portfolio</h1>
               <h3>{this.state.name}</h3>
               <div className=""><text style={{ textDecoration: 'underline'}}>Starting Cash:</text> {formatCash(this.state.startCash)}</div>
@@ -105,6 +108,7 @@ class Portfolio extends Component {
                   <Button variant='outline-success' size='lg' block style={{ margin: '1rem'}}>Make Trade!</Button>
           </Col>
         </Row>
+        <Footer />
       </Container>
     );
   } 
