@@ -15,10 +15,10 @@ import StockPriceLive from '../components/StockPriceLive/StockPriceLive';
 class Portfolio extends Component {
   // props are transactions (array) and user (object)
 
-  state = {}
+  state = { stocks: {} }
 
   componentDidMount = () => {
-    console.log('PROPS:', this.props);
+    // console.log('PROPS:', this.props);
     this.calculateCurrentStockHoldings();
   }
 
@@ -66,12 +66,12 @@ class Portfolio extends Component {
                     <th scope="col" className='text-center'>Qty</th>
                     <th scope="col" className='text-right'>Current Price per Share</th>
                     <th scope="col" className='text-right'>Current Value</th>
-                    <th scope="col" className='text-right'>Cost Basis per Share</th>
+                    {/* <th scope="col" className='text-right'>Cost Basis per Share</th>
                     <th scope="col" className='text-right'>Total Cost Basis</th>
                     <th scope="col" className='text-right'>Total Gain/Loss</th>
                     <th scope="col" className='text-right'>% Total Gain/Loss</th>
                     <th scope="col" className='text-center'>Action</th>
-                    <th scope="col" className='text-right'>Impact</th>
+                    <th scope="col" className='text-right'>Impact</th> */}
                   </tr>
                 </thead>
                 <tbody>
@@ -80,15 +80,14 @@ class Portfolio extends Component {
                       <td style={{ display: 'block' }}>{trade.tickerSymbol}</td>
                       <td style={{ display: 'block' }}><a href={'link to company website from API call here'}>link</a></td>
                       <td>{trade.quantity}</td>
-                      {console.log(trade.tickerSymbol)}
                       <td><StockPriceLive symbol={trade.tickerSymbol} /></td>
-                      <td>{'calc using API data'}</td>
-                      <td className='text-center'>{formatCash(trade.centsTotal)}</td>
+                      <td><StockPriceLive symbol={trade.tickerSymbol} quantity={trade.quantity} /></td>
+                      {/*  <td className='text-center'>{formatCash(trade.centsTotal)}</td>
                       <td className='text-right'>formatCash(trade.price * trade.qty)</td>
                       <td>{'calc using API data'}</td>
                       <td>{'calc using API data'}</td>
                       <td style={{ display: 'block' }}><ActionBtns /></td>
-                      <td style={{ display: 'block' }}><Counter /></td>
+                      <td style={{ display: 'block' }}><Counter /></td> */}
 
 
                       {/* <td className='text-right'><Moment format='MM-DD-YYYY HH:mm a'>{trade.date}</Moment></td> */}

@@ -14,6 +14,7 @@ let cachedStockQuotes = {};
 // This is the search route to look up stock symbols
 router.route('/return_symbols/:search_text')
   .get((req, res) => {
+    if (!req.params.search_text) res.send([]);
     console.log(req.params.search_text);
     const queryString = req.params.search_text;
     // todo: add case for no text?
@@ -24,12 +25,16 @@ router.route('/return_symbols/:search_text')
       // no cached query, hit the external API:
       // console.log('New response, querying external API...');
       const searchURL = `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${queryString}&apikey=${ALPHAVANTAGE_API_KEY}`;
-      axios.get(searchURL).then((eRes) => {
-        let bestMatches = eRes.data.bestMatches;
-        bestMatches = bestMatches.map(elm => fixKeyNames(elm));
-        res.send(bestMatches);
-        cachedSymbolQueries[queryString] = bestMatches;
-      });
+      try {
+        axios.get(searchURL).then((eRes) => {
+          let bestMatches = eRes.data.bestMatches;
+          bestMatches = bestMatches.map(elm => fixKeyNames(elm));
+          res.send(bestMatches);
+          cachedSymbolQueries[queryString] = bestMatches;
+        });
+      } catch (err) {
+        console.error('error in stock.js:', err);
+      }
     }
   });
 
@@ -37,6 +42,7 @@ router.route('/return_symbols/:search_text')
 // This route is now using the IEXCLOUD API
 router.route('/quote/:symbol')
   .get((req, res) => {
+    if (!req.params.symbol) return res.send('');
     const stockSymbol = req.params.symbol;
     if (!cachedStockQuotes[stockSymbol]) {
       cachedStockQuotes[stockSymbol] = { updateTime: 0 };
@@ -55,15 +61,20 @@ router.route('/quote/:symbol')
     // todo: implement actual throttle/queue
     const randDelay = Math.floor(Math.random() * 100); // delay of 0 - 99 ms
     setTimeout(() => {
-      axios.get(externalURL).then(eRes => {
-        const { data } = eRes;
-        stock.companyName = data.companyName;
-        stock.price = data.latestPrice;
-        stock.cachedValueSent = false;
-        stock.updateTime = Date.now();
-        res.send(stock);
-        return;
-      });
+      try {
+        axios.get(externalURL).then(eRes => {
+          const { data } = eRes;
+          stock.companyName = data.companyName;
+          stock.price = data.latestPrice;
+          stock.cachedValueSent = false;
+          stock.updateTime = Date.now();
+          res.send(stock);
+          return;
+        });
+      } catch (err) {
+        console.error('Error with stock.js axios.get request:', err);
+      }
+
     }, randDelay);
 
 
@@ -82,20 +93,26 @@ router.route('/quote/:symbol')
 router.route('/daily/:symbol')
   .get((req, res) => {
     const stockSymbol = req.params.symbol;
+    if (!stockSymbol) res.send('');
     const externalURL = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=${stockSymbol}&apikey=${ALPHAVANTAGE_API_KEY}`;
-    axios.get(externalURL).then(eRes => {
-      const resObj = {}; // new obj to return to client
-      // resObj.metaData = fixKeyNames(eRes.data["Meta Data"]); // clean up metadata keys
-      const newSeries = []; // new arr to hold series data - need to convert to arr to display as graph later
-      for (let key in eRes.data['Time Series (Daily)']) { // clean up keys in series data:
-        // newSeries[key] = fixKeyNames(eRes.data['Time Series (Daily)'][key])
-        newSeries.push({ name: key, ...fixKeyNames(eRes.data['Time Series (Daily)'][key]) });
-      }
-      newSeries.reverse(); // reverse so that order is ascending
-      // resObj.series = newSeries;
-      console.log('Sending newSeries:', newSeries);
-      res.send(newSeries);
-    });
+    try {
+      axios.get(externalURL).then(eRes => {
+        const resObj = {}; // new obj to return to client
+        // resObj.metaData = fixKeyNames(eRes.data["Meta Data"]); // clean up metadata keys
+        const newSeries = []; // new arr to hold series data - need to convert to arr to display as graph later
+        for (let key in eRes.data['Time Series (Daily)']) { // clean up keys in series data:
+          // newSeries[key] = fixKeyNames(eRes.data['Time Series (Daily)'][key])
+          newSeries.push({ name: key, ...fixKeyNames(eRes.data['Time Series (Daily)'][key]) });
+        }
+        newSeries.reverse(); // reverse so that order is ascending
+        // resObj.series = newSeries;
+        console.log('Sending newSeries:', newSeries);
+        res.send(newSeries);
+      });
+    } catch (error) {
+      console.error('Error in stock.js:', error);
+    }
+
   });
 
 function fixKeyNames(obj) {

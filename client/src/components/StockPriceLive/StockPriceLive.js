@@ -11,13 +11,7 @@ class StockPriceLive extends Component {
   }
 
   componentDidMount = () => {
-    // adding random delay to space out the API calls - I keep getting throttled
-    // const randDelay = Math.floor(Math.random() * 100); // delay of 0 - 99 ms
-    // setTimeout(() => {
-    //   this.setState({ interval: setInterval(this.getPrice, 60000) })
-    //   this.getPrice();
-    // }, randDelay);
-    // above code did work, but I'm moving the throttling code to the API route
+    this.setState({ quantity: this.props.quantity || 1 });
     this.setState({ interval: setInterval(this.getPrice, 60000) });
     this.getPrice();
   }
@@ -29,11 +23,9 @@ class StockPriceLive extends Component {
 
   getPrice = async () => {
     const res = await API.getCurrentPrice(this.props.symbol);
+    if (res.data.price === 'undefined') return;
     const { price } = res.data;
-    // console.log('PRICE IS:', price);
-    // console.log('typeof price:', typeof price);
-    const formattedPrice = formatQuotedPrice(price);
-    // console.log('FORMATTED PRICE:', formattedPrice);
+    const formattedPrice = formatQuotedPrice(price * this.state.quantity);
     this.setState({ price: formattedPrice });
   }
 

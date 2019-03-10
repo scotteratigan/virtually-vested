@@ -38,10 +38,16 @@ module.exports = {
     });
   },
   update: function (req, res) {
-    db.User
-      .findOneAndUpdate({ _id: req.params.id }, req.body)
-      .then(dbModel => res.json(dbModel))
-      .catch(err => res.status(422).json(err));
+    console.log('We\'re in the update function.');
+    console.log('req.params:', req.params);
+    res.json('blah');
+    // db.User
+    //   .findOneAndUpdate({ _id: req.params.id }, req.body)
+    //   .then(dbModel => res.json(dbModel))
+    //   .catch(err => res.status(422).json(err));
+  },
+  logInOrSignUp: function (req, res) {
+    res.json(req.query);
   },
   remove: function (req, res) {
     db.User

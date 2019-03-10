@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+// import { browserHistory } from 'react-router';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Nav from './components/Nav';
 import StockHistory from './components/StockHistory/StockHistory';
@@ -7,25 +8,35 @@ import NoMatch from './pages/NoMatch';
 import Portfolio from './pages/Portfolio';
 import TradeHistory from './pages/TradeHistory';
 import SignUp from './components/SignUp/SignUp';
-import API from './utils/API';
+// import API from './utils/API';
 import StockPriceLive from './components/StockPriceLive/StockPriceLive';
+import GrabLoginInfo from './components/GrabLoginInfo/GrabLoginInfo';
+import createBrowserHistory from 'history/createBrowserHistory';
+
+const history = createBrowserHistory();
 
 class App extends Component {
   state = {
-    userLoggedIn: true,
-    transactions: []
+    userLoggedIn: false,
+    userToken: null,
+    transactions: [],
+    stockPrices: [],
   }
   // state will  be used to track logged-in status & more
   // todo: add /tos and /privacy routes (required by Twitter login API)
 
+  logUserIn = token => {
+    this.setState({ userLoggedIn: true, userToken: token });
+  }
+
   componentDidMount() {
-    if (this.state.userLoggedIn) this.loadUserData();
+    // if (this.state.userLoggedIn) this.loadUserData();
   }
 
   loadUserData = () => {
     // todo: retry if db connection fails - was happening often on home PC
     // todo: replace with a filter search when we have other users
-    API.getUser()
+    /*API.getUser()
       .then(res => {
         const user = res.data[0];
         this.setState({ user }, () => {
@@ -37,14 +48,23 @@ class App extends Component {
             });
         });
       }).catch(err => console.log(err));
+      */
   };
+
+  componentDidUpdate = () => {
+    if (this.state.userLoggedIn) {
+      console.log(`We're LOGGED IN baby!`);
+      // this is when you would make DB calls to load user data...
+    }
+  }
 
   render() {
     return (
-      <Router>
+      <Router history={history}>
         <>
-          <Nav />
-          <StockPriceLive />
+          {/* Pass login info to Nav to pass into login component */}
+          <Nav userLoggedIn={this.state.userLoggedIn} userToken={this.state.userToken} logUserIn={this.logUserIn} />
+          {/* <StockPriceLive /> */}
           <Switch>
             <Route exact path='/' component={Index} />
             {/* Need this funky routing to pass props. See:
@@ -63,6 +83,15 @@ class App extends Component {
             />
             <Route exact path='/stockhistory' component={StockHistory} />
             <Route exact path='/signup' component={SignUp} />
+            {/* todo: look up example of below */}
+            {/* <Route path='/loggedin' component={GrabLoginInfo} /> */}
+            {/* logUserIn */}
+            <Route
+              path='/loggedin'
+              render={(props) => <GrabLoginInfo {...props}
+                logUserIn={this.logUserIn} />}
+            />
+
             <Route component={NoMatch} />
           </Switch>
         </>

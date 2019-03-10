@@ -1,7 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import LogIn from '../LogIn/LogIn';
 
-function Nav() {
+function Nav(props) {
   return (
     <nav className='navbar navbar-expand-lg navbar-dark bg-primary'>
       <a className='navbar-brand' href='/'>
@@ -40,15 +41,8 @@ function Nav() {
             </Link>
           </li>
         </ul>
-        <ul className='navbar-nav ml-4'>
-          <li className='nav-item'>
-            <Link to='/login'>
-              <span className='text-light'>Login</span>
-            </Link>
-          </li>
-        </ul>
       </div>
-
+      <LogIn userLoggedIn={props.userLoggedIn} userToken={props.userToken} logUserIn={props.logUserIn} />
     </nav>
   );
 }

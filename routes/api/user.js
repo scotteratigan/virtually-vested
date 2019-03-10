@@ -11,8 +11,9 @@ router
   .route('/signup')
   .post(userController.create);
 
-//   .get(userController.findById)
-//   .put(userController.update)
-//   .delete(userController.remove);
+// Matches with '/api/user/login'
+router
+  .route('/login')
+  .post(userController.logInOrSignUp);
 
 module.exports = router;
