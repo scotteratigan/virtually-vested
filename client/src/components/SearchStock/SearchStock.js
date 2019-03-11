@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import API from '../../utils/API';
 
 //todo - add company name w/ special delimiter char
 
@@ -13,6 +14,11 @@ class SearchStocks extends Component {
 		event.preventDefault();
 		const searchSymbol = this.state.searchTerm.substring(0, this.state.searchTerm.indexOf('-') - 1);
 		alert('You selected: ' + searchSymbol);
+		const apiURL = `/api/stock/quote/${searchSymbol}`;
+		axios.get(apiURL).then(res => {
+			// todo: don't update list user clicks on suggestion
+			console.log('res.data:', res.data);
+		});
 	}
 
 	handleKeyInput = async (event) => {
@@ -23,7 +29,7 @@ class SearchStocks extends Component {
 		await this.setState({ searchTerm: event.target.value });
 		if (searchAPI) {
 			const apiURL = `/api/stock/return_symbols/${this.state.searchTerm}`;
-			// console.log('Getting URL:', apiURL);
+			console.log('Getting URL:', apiURL);
 			axios.get(apiURL).then(res => {
 				// todo: don't update list user clicks on suggestion
 				console.log('res.data:', res.data);

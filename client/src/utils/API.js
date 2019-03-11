@@ -6,7 +6,7 @@ export default {
         return axios.get('/api/user');
     },
     stockDailyHistory: function (symbol) {
-        console.log('hitting the api route...');
+        // console.log('hitting the api route...');
         return axios.get(`/api/stock/daily/${symbol}`);
     }
 

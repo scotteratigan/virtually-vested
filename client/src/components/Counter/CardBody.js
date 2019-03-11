@@ -10,7 +10,7 @@ function CardBody(props) {
             <button className='btn-outline-danger btn-sm' onClick={props.handleDecrement}>
         -
             </button>
-            <div className="counter-score" style={{display: 'inline-block', overflow: 'hidden' }}>{props.count}</div>
+            <div className="counter-score" style={{display: 'inline-block', overflow: 'hidden' }}>{props.netChangeNumOfShares}</div>
             
             <button className='btn-outline-success btn-sm' onClick={props.handleIncrement}>
         +
