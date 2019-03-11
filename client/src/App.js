@@ -16,7 +16,7 @@ class App extends Component {
     userLoggedIn: false,
     transactions: [], // all buy and sell records
     stockPortfolio: [], // record of stocks currently owned
-    stockInfo: [] // current market prices
+    stockInfo: {} // current market prices
   }
   // todo: add /tos and /privacy routes (required by Twitter login API)
 
@@ -80,10 +80,14 @@ class App extends Component {
     const stockInfoPromises = this.state.stockPortfolio.map(async stock => {
       return API.getCurrentPrice(stock.tickerSymbol);
     });
-    const stockInfo = [];
+    const stockInfo = {};
     Promise.all(stockInfoPromises).then(responses => {
       responses.forEach(response => {
-        stockInfo.push(response.data);
+        const { data } = response;
+        stockInfo[data.tickerSymbol] = { ...data }
+        // TODO: I'm HERE... need to include ticker symbol in API RESPONSE
+        // tickerSymbol = response.data.
+        // stockInfo.push(response.data);
       });
       this.setState({ stockInfo })
     });
@@ -111,6 +115,7 @@ class App extends Component {
               path='/trades'
               render={(props) => <TradeHistory {...props}
                 transactions={this.state.transactions}
+                stockInfo={this.state.stockInfo}
                 user={this.state.user} />}
             />
             <Route exact path='/stockhistory' component={StockHistory} />

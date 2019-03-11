@@ -27,7 +27,6 @@ class Portfolio extends Component {
             <Jumbotron>
               <h1>Trade History</h1>
             </Jumbotron>
-            <SearchStocks selectedStock={this.state.selectedStock} />
             <div><h3 className='text-center'>Trade History</h3></div>
             {this.props.transactions ? (
               <table className="table">
@@ -35,7 +34,7 @@ class Portfolio extends Component {
                   <tr>
                     <th scope="col" className='text-center'>Symbol/Name</th>
                     <th scope="col" className='text-center'>Qty</th>
-                    <th scope="col" className='text-right'>Purchase Price</th>
+                    <th scope="col" className='text-right'>Value Each</th>
                     <th scope="col" className='text-right'>Current Value</th>
                     <th scope="col" className='text-right'>Cost Basis per Share</th>
                     <th scope="col" className='text-right'>Total Cost Basis</th>
@@ -48,12 +47,11 @@ class Portfolio extends Component {
                   {this.props.transactions.map(trade => (
                     <tr key={trade._id} className={'list-group-item-action'} >
                       <td style={{ display: 'block' }}>{trade.tickerSymbol}</td>
-                      <td style={{ display: 'block' }}><a href={'link to company website from API call here'}>{trade.name}</a></td>
                       <td>{trade.quantity}</td>
-                      <td>{'API data'}</td>
-                      <td>{'calc using API data'}</td>
+                      <td>{formatCash(trade.centsTotal / trade.quantity)}</td>
+                      <td>{formatCash(this.props.stockInfo[trade.tickerSymbol].price)}</td>
                       <td className='text-center'>{formatCash(trade.centsTotal)}</td>
-                      <td className='text-right'>formatCash(trade.price * trade.qty)</td>
+                      <td className='text-right'></td>
                       <td>{'calc using API data'}</td>
                       <td>{'calc using API data'}</td>
                       <td></td>
@@ -68,7 +66,6 @@ class Portfolio extends Component {
             ) : (
                 <h3>Loading data...</h3>
               )}
-            <Button variant='outline-success' size='lg' block style={{ margin: '1rem' }}>Make Trade!</Button>
           </Col>
         </Row>
       </Container>

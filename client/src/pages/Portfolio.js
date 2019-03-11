@@ -25,8 +25,8 @@ class Portfolio extends Component {
           <td style={{ display: 'block' }}>{stock.tickerSymbol}</td>
           <td style={{ display: 'block' }}><a href={'link to company website from API call here'}>link</a></td>
           <td>{stock.quantity}</td>
-          <td>price goes here</td>
-          <td></td>
+          <td>{formatCash(this.props.stockInfo[stock.tickerSymbol].price)}</td>
+          <td>{formatCash(stock.quantity * this.props.stockInfo[stock.tickerSymbol].price)}</td>
         </tr>
       )
     })

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const router = require('express').Router();
 const axios = require('axios');
 
@@ -64,10 +65,12 @@ router.route('/quote/:symbol')
       try {
         axios.get(externalURL).then(eRes => {
           const { data } = eRes;
+          console.log('All available data is:', data);
           stock.companyName = data.companyName;
-          stock.price = data.latestPrice;
+          stock.price = Math.floor(data.latestPrice * 100); // storing the price in cents
           stock.cachedValueSent = false;
           stock.updateTime = Date.now();
+          stock.tickerSymbol = stockSymbol;
           res.send(stock);
           return;
         });
@@ -97,7 +100,6 @@ router.route('/daily/:symbol')
     const externalURL = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=${stockSymbol}&apikey=${ALPHAVANTAGE_API_KEY}`;
     try {
       axios.get(externalURL).then(eRes => {
-        const resObj = {}; // new obj to return to client
         // resObj.metaData = fixKeyNames(eRes.data["Meta Data"]); // clean up metadata keys
         const newSeries = []; // new arr to hold series data - need to convert to arr to display as graph later
         for (let key in eRes.data['Time Series (Daily)']) { // clean up keys in series data:
