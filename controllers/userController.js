@@ -19,10 +19,12 @@ module.exports = {
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   },
-  // findByUsername: function (req, res) {
-
-  //   // db.User.findOne({username})
-  // },
+  findByToken: function (req, res) {
+    const { token } = req.params;
+    db.User.findOne({ token })
+      .then(dbModel => res.json(dbModel))
+      .catch(err => res.status(422).json(err));
+  },
   create: function (req, res) {
     console.log('ATHENTICATION REQUEST RECEIVED');
     const { username, password } = req.body;

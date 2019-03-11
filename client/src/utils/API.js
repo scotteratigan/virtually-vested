@@ -2,8 +2,8 @@
 import axios from 'axios';
 
 export default {
-  getUser: function () {
-    return axios.get('/api/user');
+  getUser: function (token) {
+    return axios.get(`/api/user/${token}`);
   },
   getTrades: function () {
     // todo: specify user

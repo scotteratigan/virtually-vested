@@ -1,9 +1,9 @@
 const router = require('express').Router();
 const userController = require('../../controllers/userController');
 
-// Matches with '/api/user'
-router.route('/')
-  .get(userController.findAll); // todo: update to findOne
+// Matches with '/api/user/lkhasdflkjasd'
+router.route('/:token')
+  .get(userController.findByToken);
 // .post(userController.create);
 
 // Matches with '/api/user/signup'

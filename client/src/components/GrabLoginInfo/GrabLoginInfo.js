@@ -11,16 +11,16 @@ class Detail extends Component {
   };
 
   componentDidMount() {
-    // todo: handle authentication of token, and expiration
+    // todo: handle authentication of token, and expiration of token
     const currentHash = window.location.hash;
     const JWT = currentHash.match(/&id_token=(.+)/)[1];
     const decoded = jwt_decode(JWT);
-    const userId = decoded.sub;
-    console.log('userId:', userId);
-    this.props.logUserIn(userId);
+    let userToken = decoded.sub;
+    userToken = userToken.replace(/\|/, '-');
+    console.log('userToken:', userToken);
+    this.props.logUserIn(userToken);
     console.log('about to call API.logUserIn from GrabLoginInfo');
-    API.logUserIn(userId);
-    // todo: redirect to new page now? or allow user to set username here?
+    API.logUserIn(userToken);
   }
 
   render() {

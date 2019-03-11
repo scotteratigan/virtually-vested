@@ -9,9 +9,10 @@ import Portfolio from './pages/Portfolio';
 import TradeHistory from './pages/TradeHistory';
 import SignUp from './components/SignUp/SignUp';
 // import API from './utils/API';
-import StockPriceLive from './components/StockPriceLive/StockPriceLive';
+// import StockPriceLive from './components/StockPriceLive/StockPriceLive';
 import GrabLoginInfo from './components/GrabLoginInfo/GrabLoginInfo';
 import createBrowserHistory from 'history/createBrowserHistory';
+import API from './utils/API';
 
 const history = createBrowserHistory();
 
@@ -26,14 +27,23 @@ class App extends Component {
   // todo: add /tos and /privacy routes (required by Twitter login API)
 
   logUserIn = token => {
-    this.setState({ userLoggedIn: true, userToken: token });
+    this.setState({ userLoggedIn: true, userToken: token }, () => {
+      console.log('Calling loadUserData with token:', this.state.userToken);
+      this.loadUserData(this.state.userToken)
+    });
   }
 
   componentDidMount() {
     // if (this.state.userLoggedIn) this.loadUserData();
   }
 
-  loadUserData = () => {
+  loadUserData = token => {
+    console.log("Attempting to load user data with token:", token);
+    API.getUser(token).then(res => {
+      alert(JSON.stringify(res.data));
+    });
+
+
     // todo: retry if db connection fails - was happening often on home PC
     // todo: replace with a filter search when we have other users
     /*API.getUser()

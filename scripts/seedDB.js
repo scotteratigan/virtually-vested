@@ -14,7 +14,7 @@ const userSeed = [
   {
     name: 'First User',
     email: 'user@email.com',
-    passHash: 'todo: implement this',
+    token: 'google-oauth2-112001694519846478968',
     portfolioValue: 0,
     cash: 10000000,
     // todo: generate ids automatically

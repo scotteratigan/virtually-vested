@@ -5,7 +5,7 @@ import Jumbotron from '../components/Jumbotron';
 import { Col, Row, Container } from '../components/Grid';
 import { formatCash } from '../utils/misc';
 import SearchStocks from '../components/SearchStock/SearchStock';
-import Counter from '../components/Counter';
+// import Counter from '../components/Counter';
 // import Moment from 'react-moment';
 import Button from 'react-bootstrap/Button';
 

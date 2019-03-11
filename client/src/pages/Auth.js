@@ -13,8 +13,6 @@ export default class Auth {
   });
 
   login() {
-    // let temp = this.auth0.authorize();
-    // console.log(JSON.stringify(temp));
     this.auth0.authorize();
   }
 }
