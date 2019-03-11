@@ -12,10 +12,11 @@ import API from './utils/API';
 
 class App extends Component {
   state = {
-    user: {},
+    user: {}, // user object, contains token, name, email, cash, portfolioValue
     userLoggedIn: false,
-    transactions: [],
-    stockPrices: []
+    transactions: [], // all buy and sell records
+    stockPortfolio: [], // record of stocks currently owned
+    stocksPrices: [] // current market prices
   }
   // todo: add /tos and /privacy routes (required by Twitter login API)
 
@@ -23,6 +24,7 @@ class App extends Component {
     this.setState({ userLoggedIn: true, user: { token } }, () => {
       console.log('Calling loadUserData with token:', this.state.user.token);
       this.loadUserData(this.state.user.token);
+      this.loadUserTransactions(this.state.user.token);
     });
   }
 
@@ -31,7 +33,9 @@ class App extends Component {
       user: {},
       userLoggedIn: false,
       transactions: [],
-    }); // note: don't wipe out stock prices, no point
+      stockPortfolio: []
+      // note: don't wipe out stock prices, no point
+    });
   }
 
   loadUserData = token => {
@@ -39,19 +43,38 @@ class App extends Component {
     API.getUser(token).then(res => {
       // alert(JSON.stringify(res.data));
       console.log('App.js loadUserData: data is loaded:', res.data);
-      this.setState({ user: { ...res.data } }, this.calculateCurrentStockList());
+      this.setState({ user: { ...res.data } });
     });
     // todo: retry if db connection fails - was happening often on home PC
   };
 
-  componentDidUpdate = () => {
-    if (this.state.userLoggedIn) {
-      console.log(`We're LOGGED IN baby!`);
-    }
+  loadUserTransactions = token => {
+    API.getTrades(token).then(res => {
+      console.log('App.js loadUserTransactions:', res.data);
+      this.setState({ transactions: [...res.data] }, this.calculateCurrentStockList);
+    })
   }
 
   calculateCurrentStockList = () => {
-    alert('Calculating stock list now that we\'re logged in.');
+    // after stock transactions are loaded into state, figure out which stocks the user owns:
+    let portfolioObj = this.state.transactions.reduce(
+      (transactions, transaction) => {
+        const { tickerSymbol, quantity } = transaction;
+        if (!transactions[tickerSymbol]) transactions[tickerSymbol] = 0;
+        transactions[tickerSymbol] += parseInt(quantity);
+        return transactions;
+      }, {}
+    );
+    console.log('Portfolio is:', portfolioObj);
+    // now convert this object to an array:
+    let stockPortfolio = [];
+    for (let stock in portfolioObj) {
+      stockPortfolio.push({ tickerSymbol: stock, quantity: portfolioObj[stock] });
+    }
+    stockPortfolio = stockPortfolio.filter(stock => stock.quantity > 0); // filter out negative or zero stocks
+    console.log('Portfolio array is:', stockPortfolio);
+    this.setState({ stockPortfolio });
+    this.setState({ portfolio: stockPortfolio });
   }
 
   render() {

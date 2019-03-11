@@ -10,9 +10,10 @@ module.exports = {
   //     .then(dbModel => res.json(dbModel))
   //     .catch(err => res.status(422).json(err));
   // },
-  findByUser: function (req, res) {
+  findByToken: function (req, res) {
+    console.log('transactionController.js db.transactions.find req.params:', req.params);
     db.Transactions
-      .find({ 'name': 'First User' })
+      .find({ 'token': 'google-oauth2-112001694519846478968' }) // todo: actually call this properly
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   }

@@ -15,7 +15,7 @@ const userSeed = [
     // note: a change here requires a change in userController.js as well
     name: 'First User',
     email: 'user@email.com',
-    token: '1234',
+    token: 'google-oauth2-112001694519846478968',
     portfolioValue: 0,
     cash: 10000000,
     // todo: generate ids automatically
@@ -28,28 +28,28 @@ const userSeed = [
 
 const transactionSeed = [
   {
-    name: 'First User',
+    token: 'google-oauth2-112001694519846478968',
     date: new Date(Date.now()),
     tickerSymbol: 'TSLA',
     quantity: 5,
     centsTotal: -138120
   },
   {
-    name: 'First User',
+    token: 'google-oauth2-112001694519846478968',
     date: new Date(Date.now()),
     tickerSymbol: 'AAPL',
     quantity: 15,
     centsTotal: -261780
   },
   {
-    name: 'First User',
+    token: 'google-oauth2-112001694519846478968',
     date: new Date(Date.now()),
     tickerSymbol: 'AAPL',
     quantity: 1,
     centsTotal: -17452
   },
   {
-    name: 'First User',
+    token: 'google-oauth2-112001694519846478968',
     date: new Date(Date.now()),
     tickerSymbol: 'TSLA',
     quantity: -2,

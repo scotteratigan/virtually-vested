@@ -6,9 +6,9 @@ export default {
     console.log('API.js getUser: token:', token);
     return axios.get(`/api/user/${token}`);
   },
-  getTrades: function () {
-    // todo: specify user
-    return axios.get('/api/transactions');
+  getTrades: function (token) {
+    // todo: ensure user is authorized
+    return axios.get(`/api/transactions/${token}`);
   },
   getCurrentPrice: function (symbol) {
     if (!symbol) return {};
