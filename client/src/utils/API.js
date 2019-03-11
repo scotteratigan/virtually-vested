@@ -3,6 +3,7 @@ import axios from 'axios';
 
 export default {
   getUser: function (token) {
+    console.log('API.js getUser: token:', token);
     return axios.get(`/api/user/${token}`);
   },
   getTrades: function () {

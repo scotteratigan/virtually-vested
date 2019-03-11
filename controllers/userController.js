@@ -1,8 +1,6 @@
 /* eslint-disable no-console */
 const db = require('../models');
-const bcrypt = require('bcrypt');
-const saltRounds = 10;
-// const jwt = require('jsonwebtoken');
+const CircularJSON = require('circular-json');
 
 // Defining methods for the userController
 module.exports = {
@@ -20,24 +18,40 @@ module.exports = {
       .catch(err => res.status(422).json(err));
   },
   findByToken: function (req, res) {
+    console.log('FIND BY TOKEN IS HITTING.')
+    console.log(CircularJSON.stringify(req.params));
     const { token } = req.params;
-    db.User.findOne({ token })
-      .then(dbModel => res.json(dbModel))
-      .catch(err => res.status(422).json(err));
+    db.User.findOne({ 'token': token })
+      .then(dbRes => {
+        console.log('in db.User.findOne.then routine...');
+        if (dbRes) {
+          console.log('User exists.');
+          res.json(dbRes);
+        } else {
+          console.log('Creating new user');
+          // res.send('CREATE NEW USER');
+          // create(res, res, token);
+          db.User.create({ token }).then(dbRes => res.json(dbRes))
+            .catch(err => {
+              console.error('Error creating new user:', err);
+              res.status(422).json(err);
+            });
+        }
+      })
+      .catch(err => {
+        console.error('Error:', err);
+        res.status(422).json(err)
+      });
   },
-  create: function (req, res) {
-    console.log('ATHENTICATION REQUEST RECEIVED');
-    const { username, password } = req.body;
-    console.log('username:', username, 'password:', password);
-    bcrypt.hash(password, saltRounds, (err, hash) => {
-      db.User
-        .create({ username: username, passHash: hash })
-        .then(dbModel => {
-          // const token = generateWebToken(username);
-          res.json(dbModel);
-        })
-        .catch(err => res.status(422).json(err));
-    });
+  create: function (req, res, token) {
+    // note: a change here requires a change in seedDB.js as well:
+    console.log('Creating new user...');
+    db.User
+      .create({ token })
+      .then(dbRes => {
+        res.json(dbRes);
+      })
+      .catch(err => res.status(422).json(err));
   },
   update: function (req, res) {
     console.log('We\'re in the update function.');
@@ -59,19 +73,3 @@ module.exports = {
       .catch(err => res.status(422).json(err));
   }
 };
-
-/*function generateWebToken(username) {
-  // generate JWT here and send to client:
-  const signOptions = {
-    issuer: 'VirtuallyVested',
-    subject: 'Users',
-    audience: 'VirtuallyVested Website',
-    expiresIn: '12h',
-    algorithm: 'HS256'
-  };
-  const privateKEY = process.env.PRIVATE;
-  // console.log('privateKey:', privateKEY);
-  const token = jwt.sign({ username }, privateKEY, signOptions);
-  console.log(token);
-  return token;
-}*/

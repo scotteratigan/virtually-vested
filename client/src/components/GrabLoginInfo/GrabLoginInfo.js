@@ -16,7 +16,7 @@ class Detail extends Component {
     const JWT = currentHash.match(/&id_token=(.+)/)[1];
     const decoded = jwt_decode(JWT);
     let userToken = decoded.sub;
-    userToken = userToken.replace(/\|/, '-');
+    userToken = userToken.replace(/\|/, '-'); // strip out the | in token, replace with - (no need to escape in url this way)
     console.log('userToken:', userToken);
     this.props.logUserIn(userToken);
     console.log('about to call API.logUserIn from GrabLoginInfo');

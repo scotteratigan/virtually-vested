@@ -12,9 +12,10 @@ mongoose.connect(
 
 const userSeed = [
   {
+    // note: a change here requires a change in userController.js as well
     name: 'First User',
     email: 'user@email.com',
-    token: 'google-oauth2-112001694519846478968',
+    token: 'google-oauth2-z112001694519846478968',
     portfolioValue: 0,
     cash: 10000000,
     // todo: generate ids automatically
