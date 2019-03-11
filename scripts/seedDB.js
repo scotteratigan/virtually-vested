@@ -18,9 +18,11 @@ const userSeed = [
     portfolioValue: 0,
     startCash: 10000000,
     // todo: generate ids automatically
-    tradeHistory: [{ type: 'buy', symbol: 'APPL', name: 'Apple Inc.', date: new Date(Date.now()), qty: 10, price: -174000, id: 2398523 },
-      // { type: 'buy', symbol: 'BA', date: new Date(Date.now()), qty: 10, total: -438690, id: 2398523 },
-      { type: 'sell', symbol: 'BA', name: 'The Boeing Company', date: new Date(Date.now()), qty: 5, price: 219345, id: 2398523 }],
+    tradeHistory: [{ type: 'buy', symbol: 'APPL', name: 'Apple Inc.', date: new Date(Date.now()-86400000), qty: 10, price: -174000, id: 2398523 },
+     
+    { type: 'buy', symbol: 'BA', name: 'The Boeing Company',date: new Date(Date.now()-86400000), qty: 10, price: -438690, id: 2398523 }, 
+     
+     { type: 'sell', symbol: 'BA', name: 'The Boeing Company', date: new Date(Date.now()), qty: -5, price: 229345, id: 2398524 }],
     date: new Date(Date.now())
   }
 ];

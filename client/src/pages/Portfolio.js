@@ -6,11 +6,16 @@ import { Col, Row, Container } from '../components/Grid';
 import { formatCash } from '../utils/misc';
 import SearchStocks from '../components/SearchStock/SearchStock';
 import ActionBtns from '../components/ActionBtns';
-import Counter from '../components/Counter';
+// import Counter from '../components/Counter';
 // import Moment from 'react-moment';
 import Button from 'react-bootstrap/Button';
 import Footer from '../components/Footer';
 import Logo from '../images/logo.png';
+import axios from 'axios';
+import CardBody from "../components/Counter/CardBody";
+
+let allUniqueSymbols = [];
+let currentPrices = [];
  
 class Portfolio extends Component {
   state = {
@@ -20,13 +25,20 @@ class Portfolio extends Component {
     name: '',
     portfolioValue: 0,
     tradeHistory: [],
-    selectedStock: null // todo: determine data type
+    selectedStock: null, // todo: determine data type
+    currentPortfolio: [{
+      symbol: '',
+      sharesOwned: 0,
+      totalCostBasis: 0,
+      currentCostPerShare: 0,
+      netChangeNumOfShares: 0
+    }]
   };
  
   componentDidMount() {
     this.loadUserData();
   }
- 
+
   loadUserData = () => {
     // todo: retry if db connection fails
     // todo: replace with a filter search when we have other users
@@ -37,28 +49,92 @@ class Portfolio extends Component {
         // Calculate the net of all trades:
         const transactionsNet = tradeHistory.reduce((net, trade) => (net + trade.price), 0);
         const currentCash = startCash + transactionsNet;
+
+        // Creates an array of all unique symbols from the trade history
+        const allSymbols = tradeHistory.map(trade => trade.symbol)
+          // console.log("All Symbols: " + allSymbols);
+        allUniqueSymbols = allSymbols.filter(function(item, pos, self) {
+          return self.indexOf(item) === pos;
+        });
+         console.log('All Unique Symbols: ' + allUniqueSymbols);
+        
+        // Get sharesOwned for each symbol and push to an array
+      const sharesOwnedPerSymbol = [];
+
+      for (let i=0; i<allUniqueSymbols.length; i++) {
+        let temp = tradeHistory.filter((trade) => trade.symbol.indexOf(allUniqueSymbols[i]) > -1);
+        
+        let owned = temp.reduce((net, trade) => (net + trade.qty), 0);
+          
+        sharesOwnedPerSymbol.push(owned);
+      }
+        console.log('owned: '  + sharesOwnedPerSymbol);
+
+         // Get totalCostBasis for each symbol and push to an array
+      const totalCostBasisPerSymbol = [];
+
+      for (let i=0; i<allUniqueSymbols.length; i++) {
+        let temp = tradeHistory.filter((trade) => trade.symbol.indexOf(allUniqueSymbols[i]) > -1);
+        
+        let owned = temp.reduce((net, trade) => (net + trade.price), 0);
+          
+        totalCostBasisPerSymbol.push(owned);
+      }
+        console.log('Total Cost Basis: ' + totalCostBasisPerSymbol);
+
+        
+     // todo: add currentPortfolio data to setstate    
         this.setState({ currentCash, startCash, email, name, portfolioValue, tradeHistory })
       }).catch(err => console.log(err));
   };
- 
+
+  
+
+
+ // handleIncrement increases this.state.count by 1
+ handleIncrement = () => {
+  // We always use the setState method to update a component's state
+  this.setState({ netChangeNumOfShares: this.state.netChangeNumOfShares + 1 });
+}
+
+// handleDecrement decreases this.state.count by 1
+handleDecrement = () => {
+  // We always use the setState method to update a component's state
+  this.setState({ netChangeNumOfShares: this.state.netChangeNumOfShares - 1 });
+}
+
+// By extending the React.Component class, Counter inherits functionality from it
+ Counter = () => {
+  // The render method returns the JSX that should be rendered
+    return (
+      <div className="card text-center">
+        <CardBody
+          netChangeNumOfShares={this.state.netChangeNumOfShares}
+          handleIncrement={this.handleIncrement}
+          handleDecrement={this.handleDecrement}
+        />
+      </div>
+    );
+  }
+
   render() {
     return (
       <Container fluid>
         <Row>
           <Col size='md-6 sm-12'>
             <Jumbotron>
-              <img src={Logo} />
+              <img src={Logo} alt='Virtually Vested' />
               <h1>Stock Portfolio</h1>
               <h3>{this.state.name}</h3>
-              <div className=""><text style={{ textDecoration: 'underline'}}>Starting Cash:</text> {formatCash(this.state.startCash)}</div>
-              <div><text style={{ textDecoration: 'underline'}}>Cash on Hand:</text> {formatCash(this.state.currentCash)}</div>
-              <div><text style={{ textDecoration: 'underline'}}>Total Gain/Loss:</text> {formatCash(this.state.currentCash-this.state.startCash)}</div>
-              <div><text style={{ textDecoration: 'underline'}}>% Total Gain/Loss:</text> {(((this.state.currentCash-this.state.startCash)/this.state.startCash)*100).toFixed(2)}%</div>
+              <div className=""><p style={{ textDecoration: 'underline'}}>Starting Cash:</p> {formatCash(this.state.startCash)}</div>
+              <div><p style={{ textDecoration: 'underline'}}>Cash on Hand:</p> {formatCash(this.state.currentCash)}</div>
+              <div><p style={{ textDecoration: 'underline'}}>Total Gain/Loss:</p> {formatCash(this.state.currentCash-this.state.startCash)}</div>
+              <div><p style={{ textDecoration: 'underline'}}>% Total Gain/Loss:</p> {(((this.state.currentCash-this.state.startCash)/this.state.startCash)*100).toFixed(2)}%</div>
               {/* Rank state data goes below */}
-              <div><text style={{ textDecoration: 'underline'}}>Rank:</text> {"X"} of {"X"}</div>
+              <div><p style={{ textDecoration: 'underline'}}>Rank:</p> {"X"} of {"X"}</div>
             </Jumbotron>
               <SearchStocks selectedStock={this.state.selectedStock} />
-                <div className='table-responsive' style={{ backgroundColor: '#5B45B9', color: 'white', width: '1022px', paddingTop: '5px' }}><h3 className='text-center'>Current Portfolio</h3></div>
+                <div className='table-responsive' style={{ backgroundColor: '#5B45B9', color: 'white', width: 'auto', paddingTop: '5px' }}><h3 className='text-center'>Current Portfolio</h3></div>
                 {this.state.tradeHistory.length ? ( 
                   <table className='table table-bordered table-hover table-sm'>
                     <thead className='thead-dark'>
@@ -83,18 +159,21 @@ class Portfolio extends Component {
                           <td>{trade.qty}</td>
                           <td>{'API data'}</td>
                           <td>{'calc using API data'}</td>
-                          <td className='text-center'>{formatCash(trade.price)}</td>
-                          <td className='text-right'>{formatCash(trade.price * trade.qty)}</td>
+                          <td className='text-center'>{formatCash(Math.abs(trade.price))}</td>
+                          <td className='text-right'>{formatCash(Math.abs(trade.price * trade.qty))}</td>
                           <td>{'calc using API data'}</td>
                           <td>{'calc using API data'}</td>
-                          <div style={{ columnCount: 3 }}>
+                          <td style={{ columnCount: 3 }}>
+                          <React.Fragment>
                           <td style={{ display: 'block' }}><ActionBtns /></td>
-                          <td style={{ display: 'block' }}><Counter /></td>
+                          <td style={{ display: 'block' }}>{this.Counter()} </td>
                           <td style={{ fontSize: '.75rem', display: 'block' }}>Est. Total Gain/Loss: {'calc using API data'}</td>
                           <td style={{ fontSize: '.75rem', display: 'block' }}>Est. New Cash on Hand: {'calc using API data'}</td>
                           <td style={{ fontSize: '.75rem', display: 'block' }}>Est. New Portfolio Value: {'calc using API data'}</td>
                           <td style={{ fontSize: '.75rem', display: 'block' }}>Est. New Portfolio % Gain/Loss: {'calc using API data'}</td>
-                          </div>
+                          </React.Fragment>
+                          </td>
+                          
 
                           {/* <td className='text-right'><Moment format='MM-DD-YYYY HH:mm a'>{trade.date}</Moment></td> */}
                         </tr>

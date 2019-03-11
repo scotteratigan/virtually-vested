@@ -38,6 +38,7 @@ router.route('/return_symbols/:search_text')
 router.route('/quote/:symbol')
   .get((req, res) => {
     const stockSymbol = req.params.symbol;
+    console.log('Stock Symbol: ' + stockSymbol)
     const externalURL = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stockSymbol}&apikey=${ALPHAVANTAGE_API_KEY}`;
     axios.get(externalURL).then(eRes => {
       let quote = eRes.data['Global Quote'];
