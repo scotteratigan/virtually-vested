@@ -39,9 +39,7 @@ class App extends Component {
   }
 
   loadUserData = token => {
-    console.log("Attempting to load user data with token:", token);
     API.getUser(token).then(res => {
-      // alert(JSON.stringify(res.data));
       console.log('App.js loadUserData: data is loaded:', res.data);
       this.setState({ user: { ...res.data } });
     });
@@ -85,9 +83,6 @@ class App extends Component {
       responses.forEach(response => {
         const { data } = response;
         stockInfo[data.tickerSymbol] = { ...data }
-        // TODO: I'm HERE... need to include ticker symbol in API RESPONSE
-        // tickerSymbol = response.data.
-        // stockInfo.push(response.data);
       });
       this.setState({ stockInfo })
     });

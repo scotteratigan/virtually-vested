@@ -1,18 +1,12 @@
 import React, { Component } from 'react';
 import Jumbotron from '../components/Jumbotron';
-// import API from '../utils/API';
-// import { Link } from 'react-router-dom';
 import { Col, Row, Container } from '../components/Grid';
 import { formatCash } from '../utils/misc';
-import SearchStocks from '../components/SearchStock/SearchStock';
 // import Counter from '../components/Counter';
 // import Moment from 'react-moment';
-import Button from 'react-bootstrap/Button';
 
 // todo: convert to stateless component? maybe...
 class Portfolio extends Component {
-  // props are transactions (array) and user (object)
-
   state = {}
 
   componentDidMount = () => {

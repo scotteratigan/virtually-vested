@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Auth from '../../pages/Auth';
+import Auth from '../../components/Auth/Auth';
 
 
 
