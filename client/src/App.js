@@ -16,7 +16,7 @@ class App extends Component {
     userLoggedIn: false,
     transactions: [], // all buy and sell records
     stockPortfolio: [], // record of stocks currently owned
-    stocksPrices: [] // current market prices
+    stockInfo: [] // current market prices
   }
   // todo: add /tos and /privacy routes (required by Twitter login API)
 
@@ -34,7 +34,7 @@ class App extends Component {
       userLoggedIn: false,
       transactions: [],
       stockPortfolio: []
-      // note: don't wipe out stock prices, no point
+      // note: don't wipe out stock info/prices
     });
   }
 
@@ -73,8 +73,20 @@ class App extends Component {
     }
     stockPortfolio = stockPortfolio.filter(stock => stock.quantity > 0); // filter out negative or zero stocks
     console.log('Portfolio array is:', stockPortfolio);
-    this.setState({ stockPortfolio });
-    this.setState({ portfolio: stockPortfolio });
+    this.setState({ stockPortfolio }, this.getAllStockInfo);
+  }
+
+  getAllStockInfo = () => {
+    const stockInfoPromises = this.state.stockPortfolio.map(async stock => {
+      return API.getCurrentPrice(stock.tickerSymbol);
+    });
+    const stockInfo = [];
+    Promise.all(stockInfoPromises).then(responses => {
+      responses.forEach(response => {
+        stockInfo.push(response.data);
+      });
+      this.setState({ stockInfo })
+    });
   }
 
   render() {
@@ -91,7 +103,8 @@ class App extends Component {
             <Route exact
               path='/portfolio'
               render={(props) => <Portfolio {...props}
-                transactions={this.state.transactions}
+                stockPortfolio={this.state.stockPortfolio}
+                stockInfo={this.state.stockInfo}
                 user={this.state.user} />}
             />
             <Route exact

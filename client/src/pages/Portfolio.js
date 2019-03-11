@@ -9,38 +9,30 @@ import SearchStocks from '../components/SearchStock/SearchStock';
 // import Counter from '../components/Counter';
 // import Moment from 'react-moment';
 import Button from 'react-bootstrap/Button';
-import StockPriceLive from '../components/StockPriceLive/StockPriceLive';
+// import StockPriceLive from '../components/StockPriceLive/StockPriceLive';
 
 // todo: convert to stateless component? maybe...
 class Portfolio extends Component {
-  // props are transactions (array) and user (object)
 
   state = { stocks: {} }
 
-  componentDidMount = () => {
-    // console.log('PROPS:', this.props);
-    this.calculateCurrentStockHoldings();
-  }
-
-  calculateCurrentStockHoldings = () => {
-    // An object is much more efficient than an array here.
-    // Should be O(n) instead of O(n^2) if I used array.find().
-    const stocksObject = {};
-    this.props.transactions.forEach(transaction => {
-      // console.log('Analyzing transaction:', transaction);
-      const { tickerSymbol, quantity } = transaction;
-      if (!stocksObject[tickerSymbol]) stocksObject[tickerSymbol] = 0;
-      stocksObject[tickerSymbol] += quantity;
-    });
-    console.log('stocksObject:', stocksObject);
-    this.setState({ stocks: stocksObject });
-  }
-
   renderPortfolioListing = () => {
-    for (let key in this.state.stocks) {
-      console.log('Stock key:', key);
-    }
+    console.log('rendering portfolio listing:', this.props.stockPortfolio);
+    return this.props.stockPortfolio.map(stock => {
+      console.log('stock is:', stock);
+      return (
+        <tr key={stock.tickerSymbol} className={'list-group-item-action'} >
+          <td style={{ display: 'block' }}>{stock.tickerSymbol}</td>
+          <td style={{ display: 'block' }}><a href={'link to company website from API call here'}>link</a></td>
+          <td>{stock.quantity}</td>
+          <td>price goes here</td>
+          <td></td>
+        </tr>
+      )
+    })
   }
+
+  // todo: redirect to login page if not logged in
 
   render() {
     return (
@@ -49,16 +41,15 @@ class Portfolio extends Component {
           <Col size='md-6 sm-12'>
             <Jumbotron>
               <h1>Stock Portfolio</h1>
-              <h3>{this.state.name}</h3>
+              <h3>{this.props.user.name}</h3>
               <div className="">Cash: {this.props.user ? formatCash(this.props.user.cash) : 0}</div>
-              <div>Total Gain/Loss: formatCash(this.state.currentCash - this.state.startCash)</div>
-              <div>% Total Gain/Loss: (((this.state.currentCash - this.state.startCash) / this.state.startCash) * 100).toFixed(2)%</div>
+              {/* <div>Total Gain/Loss: formatCash(this.state.currentCash - this.state.startCash)</div>
+              <div>% Total Gain/Loss: (((this.state.currentCash - this.state.startCash) / this.state.startCash) * 100).toFixed(2)%</div> */}
               {/* Rank state data goes below */}
               <div>Rank: {"X"} of {"X"}</div>
             </Jumbotron>
             <SearchStocks selectedStock={this.state.selectedStock} />
-            {this.renderPortfolioListing()}
-            {this.props.transactions ? (
+            {this.props.stockPortfolio ? (
               <table className="table">
                 <thead>
                   <tr>
@@ -75,29 +66,11 @@ class Portfolio extends Component {
                   </tr>
                 </thead>
                 <tbody>
-                  {this.props.transactions.map(trade => (
-                    <tr key={trade._id} className={'list-group-item-action'} >
-                      <td style={{ display: 'block' }}>{trade.tickerSymbol}</td>
-                      <td style={{ display: 'block' }}><a href={'link to company website from API call here'}>link</a></td>
-                      <td>{trade.quantity}</td>
-                      <td><StockPriceLive symbol={trade.tickerSymbol} /></td>
-                      <td><StockPriceLive symbol={trade.tickerSymbol} quantity={trade.quantity} /></td>
-                      {/*  <td className='text-center'>{formatCash(trade.centsTotal)}</td>
-                      <td className='text-right'>formatCash(trade.price * trade.qty)</td>
-                      <td>{'calc using API data'}</td>
-                      <td>{'calc using API data'}</td>
-                      <td style={{ display: 'block' }}><ActionBtns /></td>
-                      <td style={{ display: 'block' }}><Counter /></td> */}
-
-
-                      {/* <td className='text-right'><Moment format='MM-DD-YYYY HH:mm a'>{trade.date}</Moment></td> */}
-                    </tr>
-
-                  ))}
+                  {this.renderPortfolioListing()}
                 </tbody>
               </table>
             ) : (
-                <h3>Loading data...</h3>
+                <h3>No Stocks Found</h3>
               )}
             <Button variant='outline-success' size='lg' block style={{ margin: '1rem' }}>Make Trade!</Button>
           </Col>
