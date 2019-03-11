@@ -3,13 +3,13 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-  name: { type: String, default: 'New User' },
-  email: { type: String, default: '' },
+  name: { type: String, default: 'New User', required: true },
+  email: { type: String, default: '', required: true },
   token: { type: String, required: true },
-  date: { type: Date, default: Date.now },
+  date: { type: Date, default: Date.now, required: true },
   // note: all transactions are in pennies, then divided by 100 to display as dollars
-  portfolioValue: { type: Number, default: 0 },
-  cash: { type: Number, default: 10000000 }
+  portfolioValue: { type: Number, default: 0, required: true },
+  cash: { type: Number, default: 10000000, required: true }
 });
 
 // userSchema.plugin(findOrCreate);

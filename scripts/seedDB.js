@@ -15,7 +15,7 @@ const userSeed = [
     // note: a change here requires a change in userController.js as well
     name: 'First User',
     email: 'user@email.com',
-    token: 'google-oauth2-z112001694519846478968',
+    token: '1234',
     portfolioValue: 0,
     cash: 10000000,
     // todo: generate ids automatically
@@ -61,7 +61,7 @@ db.User
   .deleteMany({})
   .then(() => db.User.collection.insertMany(userSeed))
   .then(data => {
-    console.log(data.result.n + ' records inserted!');
+    console.log(data.result.n + ' user records inserted!');
     seedTransactions(); // calling this from a function so we can exit after completing
   })
   .catch(err => {
@@ -74,7 +74,7 @@ function seedTransactions() {
     .deleteMany({})
     .then(() => db.Transactions.collection.insertMany(transactionSeed))
     .then(data => {
-      console.log(data.result.n + ' records inserted!');
+      console.log(data.result.n + ' transaction records inserted!');
       process.exit(0); // need to exit after seeding records or process hangs
     })
     .catch(err => {

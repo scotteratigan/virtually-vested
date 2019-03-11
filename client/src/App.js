@@ -1,80 +1,66 @@
 import React, { Component } from 'react';
-// import { browserHistory } from 'react-router';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import Nav from './components/Nav';
+import Nav from './components/Nav/Nav';
 import StockHistory from './components/StockHistory/StockHistory';
 import Index from './pages/Index';
 import NoMatch from './pages/NoMatch';
 import Portfolio from './pages/Portfolio';
 import TradeHistory from './pages/TradeHistory';
 import SignUp from './components/SignUp/SignUp';
-// import API from './utils/API';
-// import StockPriceLive from './components/StockPriceLive/StockPriceLive';
 import GrabLoginInfo from './components/GrabLoginInfo/GrabLoginInfo';
-import createBrowserHistory from 'history/createBrowserHistory';
 import API from './utils/API';
-
-const history = createBrowserHistory();
 
 class App extends Component {
   state = {
+    user: {},
     userLoggedIn: false,
-    userToken: null,
     transactions: [],
-    stockPrices: [],
+    stockPrices: []
   }
-  // state will  be used to track logged-in status & more
   // todo: add /tos and /privacy routes (required by Twitter login API)
 
   logUserIn = token => {
-    this.setState({ userLoggedIn: true, userToken: token }, () => {
-      console.log('Calling loadUserData with token:', this.state.userToken);
-      this.loadUserData(this.state.userToken)
+    this.setState({ userLoggedIn: true, user: { token } }, () => {
+      console.log('Calling loadUserData with token:', this.state.user.token);
+      this.loadUserData(this.state.user.token);
     });
   }
 
-  componentDidMount() {
-    // if (this.state.userLoggedIn) this.loadUserData();
+  logUserOut = () => {
+    this.setState({
+      user: {},
+      userLoggedIn: false,
+      transactions: [],
+    }); // note: don't wipe out stock prices, no point
   }
 
   loadUserData = token => {
     console.log("Attempting to load user data with token:", token);
     API.getUser(token).then(res => {
-      alert(JSON.stringify(res.data));
+      // alert(JSON.stringify(res.data));
+      console.log('App.js loadUserData: data is loaded:', res.data);
+      this.setState({ user: { ...res.data } }, this.calculateCurrentStockList());
     });
-
-
     // todo: retry if db connection fails - was happening often on home PC
-    // todo: replace with a filter search when we have other users
-    /*API.getUser()
-      .then(res => {
-        const user = res.data[0];
-        this.setState({ user }, () => {
-          // grabbing the transactions after user is loaded
-          // this may be necessary to ensure I have token in future?
-          API.getTrades()
-            .then(res => {
-              this.setState({ transactions: res.data });
-            });
-        });
-      }).catch(err => console.log(err));
-      */
   };
 
   componentDidUpdate = () => {
     if (this.state.userLoggedIn) {
       console.log(`We're LOGGED IN baby!`);
-      // this is when you would make DB calls to load user data...
     }
+  }
+
+  calculateCurrentStockList = () => {
+    alert('Calculating stock list now that we\'re logged in.');
   }
 
   render() {
     return (
-      <Router history={history}>
+      <Router>
         <>
           {/* Pass login info to Nav to pass into login component */}
-          <Nav userLoggedIn={this.state.userLoggedIn} userToken={this.state.userToken} logUserIn={this.logUserIn} />
-          {/* <StockPriceLive /> */}
+          {/* <Nav userLoggedIn={this.state.userLoggedIn} userToken={this.state.userToken} logUserIn={this.logUserIn} /> */}
+          <Nav userLoggedIn={this.state.userLoggedIn} user={this.state.user} logUserOut={this.logUserOut} />
           <Switch>
             <Route exact path='/' component={Index} />
             {/* Need this funky routing to pass props. See:
@@ -93,9 +79,6 @@ class App extends Component {
             />
             <Route exact path='/stockhistory' component={StockHistory} />
             <Route exact path='/signup' component={SignUp} />
-            {/* todo: look up example of below */}
-            {/* <Route path='/loggedin' component={GrabLoginInfo} /> */}
-            {/* logUserIn */}
             <Route
               path='/loggedin'
               render={(props) => <GrabLoginInfo {...props}

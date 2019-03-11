@@ -21,7 +21,7 @@ export default {
     console.log('API.logUserIn: should be calling a POST to /api/user/login');
     console.log('passing in token:', userToken);
     try {
-      axios.post(`/api/user/login?user=${userToken}`);
+      return axios.post(`/api/user/login?user=${userToken}`);
     } catch (err) {
       console.err('API.js POST error:', err);
     }

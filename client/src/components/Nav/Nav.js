@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import LogIn from '../LogIn/LogIn';
+import LogOut from '../LogOut/LogOut';
 
 function Nav(props) {
   return (
@@ -42,7 +43,11 @@ function Nav(props) {
           </li>
         </ul>
       </div>
-      <LogIn userLoggedIn={props.userLoggedIn} userToken={props.userToken} logUserIn={props.logUserIn} />
+      {/* conditionally render login button: */}
+      {!props.userLoggedIn ?
+        <LogIn userLoggedIn={props.userLoggedIn} userToken={props.userToken} logUserIn={props.logUserIn} />
+        : <LogOut logUserOut={props.logUserOut} />}
+
     </nav>
   );
 }
