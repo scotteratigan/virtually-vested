@@ -20,10 +20,10 @@ class App extends Component {
   }
   // todo: add /tos and /privacy routes (required by Twitter login API)
 
-  logUserIn = token => {
-    this.setState({ userLoggedIn: true, user: { token } }, () => {
+  logUserIn = (token, email) => {
+    this.setState({ userLoggedIn: true, user: { token, email } }, () => {
       console.log('Calling loadUserData with token:', this.state.user.token);
-      this.loadUserData(this.state.user.token);
+      this.loadUserData(this.state.user);
       this.loadUserTransactions(this.state.user.token);
     });
   }
@@ -38,8 +38,9 @@ class App extends Component {
     });
   }
 
-  loadUserData = token => {
-    API.getUser(token).then(res => {
+  loadUserData = user => {
+    // const { token, email } = user;
+    API.getUser(user).then(res => {
       console.log('App.js loadUserData: data is loaded:', res.data);
       this.setState({ user: { ...res.data } });
     });

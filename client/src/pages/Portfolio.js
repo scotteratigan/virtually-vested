@@ -79,31 +79,7 @@ class Portfolio extends Component {
 
 
 
-  // handleIncrement increases this.state.count by 1
-  handleIncrement = () => {
-    // We always use the setState method to update a component's state
-    this.setState({ netChangeNumOfShares: this.state.netChangeNumOfShares + 1 });
-  }
 
-  // handleDecrement decreases this.state.count by 1
-  handleDecrement = () => {
-    // We always use the setState method to update a component's state
-    this.setState({ netChangeNumOfShares: this.state.netChangeNumOfShares - 1 });
-  }
-
-  // By extending the React.Component class, Counter inherits functionality from it
-  Counter = () => {
-    // The render method returns the JSX that should be rendered
-    return (
-      <div className="card text-center">
-        <CardBody
-          netChangeNumOfShares={this.state.netChangeNumOfShares}
-          handleIncrement={this.handleIncrement}
-          handleDecrement={this.handleDecrement}
-        />
-      </div>
-    );
-  }
 
   render() {
     return (
@@ -154,14 +130,15 @@ class Portfolio extends Component {
 
                       <td>{(((this.props.stockInfo[stock.tickerSymbol].price * stock.quantity) - Math.abs(stock.centsTotal)) / Math.abs(stock.centsTotal) * 100).toFixed(2) + ' %'}</td> {/* total gain/loss divided by total cost basis */}
                       <td style={{ columnCount: 3 }}>
-                        <React.Fragment>
-                          <td style={{ display: 'block' }}><ActionBtns /></td>
-                          <td style={{ display: 'block' }}>{this.Counter()} </td>
-                          <td style={{ fontSize: '.75rem', display: 'block' }}>Est. Total Gain/Loss: {'calc using API data'}</td>
+                        <tr>
+                          <Counter />
+                          {/* <td style={{ display: 'block' }}><ActionBtns id={stock.tickerSymbol} /></td>
+                          <td style={{ display: 'block' }}><Counter /></td> */}
+                          {/* <td style={{ fontSize: '.75rem', display: 'block' }}>Est. Total Gain/Loss: {'calc using API data'}</td>
                           <td style={{ fontSize: '.75rem', display: 'block' }}>Est. New Cash on Hand: {'calc using API data'}</td>
                           <td style={{ fontSize: '.75rem', display: 'block' }}>Est. New Portfolio Value: {'calc using API data'}</td>
-                          <td style={{ fontSize: '.75rem', display: 'block' }}>Est. New Portfolio % Gain/Loss: {'calc using API data'}</td>
-                        </React.Fragment>
+                          <td style={{ fontSize: '.75rem', display: 'block' }}>Est. New Portfolio % Gain/Loss: {'calc using API data'}</td> */}
+                        </tr>
                       </td>
 
 
@@ -184,3 +161,36 @@ class Portfolio extends Component {
 }
 
 export default Portfolio;
+
+
+// By extending the React.Component class, Counter inherits functionality from it
+class Counter extends Component {
+  state: { netChangeNumOfShares: 0 }
+
+  // handleIncrement increases this.state.count by 1
+  handleIncrement = () => {
+    // We always use the setState method to update a component's state
+    this.setState({ netChangeNumOfShares: this.state.netChangeNumOfShares + 1 });
+  }
+
+  // handleDecrement decreases this.state.count by 1
+  handleDecrement = () => {
+    // We always use the setState method to update a component's state
+    this.setState({ netChangeNumOfShares: this.state.netChangeNumOfShares - 1 });
+  }
+  // The render method returns the JSX that should be rendered
+  render() {
+    return (
+      <div className="card text-center">
+        {/* <button onClick={() => this.state.handleIncrement}>-</button> */}
+        <p>{this.state.netChangeNumOfShares}</p>
+        {/* <button onClick={() => this.state.handleDecrement}>-</button> */}
+        {/* <CardBody
+          netChangeNumOfShares={this.state.netChangeNumOfShares}
+          handleIncrement={this.handleIncrement}
+          handleDecrement={this.handleDecrement}
+        /> */}
+      </div>
+    );
+  }
+}

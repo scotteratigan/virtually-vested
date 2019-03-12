@@ -2,7 +2,8 @@ const router = require('express').Router();
 const userController = require('../../controllers/userController');
 
 // Matches with '/api/user/lkhasdflkjasd'
-router.route('/:token')
+// `/api/user/token-${user.token}&email-${user.email}`
+router.route('/token-:token&email-:email')
   .get(userController.findByToken);
 // .post(userController.create);
 
