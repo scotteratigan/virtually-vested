@@ -57,9 +57,10 @@ class App extends Component {
     // after stock transactions are loaded into state, figure out which stocks the user owns:
     let portfolioObj = this.state.transactions.reduce(
       (transactions, transaction) => {
-        const { tickerSymbol, quantity } = transaction;
-        if (!transactions[tickerSymbol]) transactions[tickerSymbol] = 0;
-        transactions[tickerSymbol] += parseInt(quantity);
+        const { tickerSymbol, quantity, centsTotal } = transaction; // todo: add cost basis
+        if (!transactions[tickerSymbol]) transactions[tickerSymbol] = { quantity: 0, centsTotal: 0 };
+        transactions[tickerSymbol].quantity += parseInt(quantity);
+        transactions[tickerSymbol].centsTotal += parseInt(centsTotal);
         return transactions;
       }, {}
     );
@@ -67,7 +68,8 @@ class App extends Component {
     // now convert this object to an array:
     let stockPortfolio = [];
     for (let stock in portfolioObj) {
-      stockPortfolio.push({ tickerSymbol: stock, quantity: portfolioObj[stock] });
+      console.log('Stock loop, stock is:', stock);
+      stockPortfolio.push({ tickerSymbol: stock, quantity: portfolioObj[stock].quantity, centsTotal: portfolioObj[stock].centsTotal });
     }
     stockPortfolio = stockPortfolio.filter(stock => stock.quantity > 0); // filter out negative or zero stocks
     console.log('Portfolio array is:', stockPortfolio);
@@ -75,6 +77,7 @@ class App extends Component {
   }
 
   getAllStockInfo = () => {
+    console.log('Ready to grab prices...');
     const stockInfoPromises = this.state.stockPortfolio.map(async stock => {
       return API.getCurrentPrice(stock.tickerSymbol);
     });
@@ -83,7 +86,8 @@ class App extends Component {
       responses.forEach(response => {
         console.log('App.js response:', response);
         const { data } = response;
-        stockInfo[data.tickerSymbol] = { ...data }
+        // console.log()
+        stockInfo[data.tickerSymbol] = { ...data };
       });
       this.setState({ stockInfo })
     });
