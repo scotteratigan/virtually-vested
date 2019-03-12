@@ -79,16 +79,6 @@ router.route('/quote/:symbol')
       }
 
     }, randDelay);
-
-
-    // Previous API:
-    // const externalURL = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stockSymbol}&apikey=${ALPHAVANTAGE_API_KEY}`;
-    // axios.get(externalURL).then(eRes => {
-    //   let quote = eRes.data['Global Quote'];
-    //   quote = fixKeyNames(quote);
-    //   console.log('Sending data:', quote);
-    //   res.send(quote);
-    // });
   });
 
 // Matches with 'api/stock/daily/tsla' where tsla is the stock symbol - response is large

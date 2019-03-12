@@ -81,6 +81,7 @@ class App extends Component {
     const stockInfo = {};
     Promise.all(stockInfoPromises).then(responses => {
       responses.forEach(response => {
+        console.log('App.js response:', response);
         const { data } = response;
         stockInfo[data.tickerSymbol] = { ...data }
       });

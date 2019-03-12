@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import API from '../../utils/API';
 
 //todo - add company name w/ special delimiter char
 
@@ -13,6 +14,11 @@ class SearchStocks extends Component {
 		event.preventDefault();
 		const searchSymbol = this.state.searchTerm.substring(0, this.state.searchTerm.indexOf('-') - 1);
 		alert('You selected: ' + searchSymbol);
+		const apiURL = `/api/stock/quote/${searchSymbol}`;
+		axios.get(apiURL).then(res => {
+			// todo: don't update list user clicks on suggestion
+			console.log('res.data:', res.data);
+		});
 	}
 
 	handleKeyInput = async (event) => {
@@ -23,7 +29,7 @@ class SearchStocks extends Component {
 		await this.setState({ searchTerm: event.target.value });
 		if (searchAPI) {
 			const apiURL = `/api/stock/return_symbols/${this.state.searchTerm}`;
-			// console.log('Getting URL:', apiURL);
+			console.log('Getting URL:', apiURL);
 			axios.get(apiURL).then(res => {
 				// todo: don't update list user clicks on suggestion
 				console.log('res.data:', res.data);
@@ -36,7 +42,7 @@ class SearchStocks extends Component {
 		return (
 			<form className="search">
 				<div className="form-group">
-					<label htmlFor="company">company Name:</label>
+					<label htmlFor="company" style={{ fontWeight: 'bold'}}>Enter Company Name or Ticker Symbol here:</label>
 					<input
 						value={this.state.searchTerm}
 						onChange={this.handleKeyInput}
@@ -44,7 +50,7 @@ class SearchStocks extends Component {
 						list="companies"
 						type="text"
 						className="form-control"
-						placeholder="Type in company name or stock ticker to begin..."
+						placeholder="ex. 'Microsoft' or 'MSFT'"
 						id="company"
 						autoComplete="off"
 					/>
@@ -53,8 +59,10 @@ class SearchStocks extends Component {
 							<option value={company.symbol + ' - ' + company.name} key={company.symbol} />
 						)) : ''}
 					</datalist>
-					<button onClick={this.handleAddStockBtn} className="btn btn-success">Add Stock</button>
+					<br />
+					<button onClick={this.handleAddStockBtn} className="btn btn-info">Add Stock to List</button>
 				</div>
+				<br />
 			</form>
 		);
 	}

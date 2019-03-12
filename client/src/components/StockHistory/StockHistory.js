@@ -3,6 +3,7 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
 } from 'recharts';
 import API from '../../utils/API';
+import Footer from '../Footer';
 
 class DailyHistory extends PureComponent {
   state = {
@@ -15,8 +16,8 @@ class DailyHistory extends PureComponent {
   }
   render() {
     return (
-      <>
-        <h1>History for {this.state.symbol}</h1>
+      <><br />
+        <h1 style= {{ marginInlineStart: '250px' }}>History for: {this.state.symbol}</h1><br />
         <LineChart
           width={800}
           height={500}
@@ -32,6 +33,7 @@ class DailyHistory extends PureComponent {
           <Legend />
           <Line type="monotone" dataKey="close" stroke="#8884d8" activeDot={{ r: 8 }} />
         </LineChart>
+        <Footer />
       </>
     );
   }

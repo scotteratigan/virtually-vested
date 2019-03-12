@@ -5,7 +5,7 @@ import LogOut from '../LogOut/LogOut';
 
 function Nav(props) {
   return (
-    <nav className='navbar navbar-expand-lg navbar-dark bg-primary'>
+    <nav className='navbar navbar-expand-lg navbar-dark bg-dark'>
       <a className='navbar-brand' href='/'>
         <i className='fas fa-chart-line'></i>
         Virtually Vested
