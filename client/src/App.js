@@ -68,11 +68,9 @@ class App extends Component {
     // now convert this object to an array:
     let stockPortfolio = [];
     for (let stock in portfolioObj) {
-      console.log('Stock loop, stock is:', stock);
       stockPortfolio.push({ tickerSymbol: stock, quantity: portfolioObj[stock].quantity, centsTotal: portfolioObj[stock].centsTotal });
     }
     stockPortfolio = stockPortfolio.filter(stock => stock.quantity > 0); // filter out negative or zero stocks
-    console.log('Portfolio array is:', stockPortfolio);
     this.setState({ stockPortfolio }, this.getAllStockInfo);
   }
 

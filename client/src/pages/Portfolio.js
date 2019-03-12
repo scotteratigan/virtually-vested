@@ -146,12 +146,13 @@ class Portfolio extends Component {
                       <td style={{ display: 'block' }}>{stock.tickerSymbol}</td>
                       {/* <td style={{ display: 'block' }}><a href={'link to company website from API call here'}>{trade.name}</a></td> */}
                       <td>{stock.quantity}</td>
-                      <td>{'API data'}</td>
-                      <td>{'calc using API data'}</td>
-                      <td className='text-center'>{formatCash(Math.abs(stock.price))}</td>
-                      <td className='text-right'>{formatCash(Math.abs(stock.price * stock.qty))}</td>
-                      <td>{'calc using API data'}</td>
-                      <td>{'calc using API data'}</td>
+                      <td>{formatCash(this.props.stockInfo[stock.tickerSymbol].price)}</td>
+                      <td>{formatCash(this.props.stockInfo[stock.tickerSymbol].price * stock.quantity)}</td>{/* current val */}
+                      <td className='text-center'>{formatCash(Math.abs(stock.centsTotal / stock.quantity))}</td> {/* cost basis per share */}
+                      <td className='text-right'>{formatCash(Math.abs(stock.centsTotal))}</td> {/* total cost basis */}
+                      <td>{formatCash((this.props.stockInfo[stock.tickerSymbol].price * stock.quantity) - Math.abs(stock.centsTotal))}</td> {/* total gain/loss (cost basis per share - current val) */}
+
+                      <td>{(((this.props.stockInfo[stock.tickerSymbol].price * stock.quantity) - Math.abs(stock.centsTotal)) / Math.abs(stock.centsTotal) * 100).toFixed(2) + ' %'}</td> {/* total gain/loss divided by total cost basis */}
                       <td style={{ columnCount: 3 }}>
                         <React.Fragment>
                           <td style={{ display: 'block' }}><ActionBtns /></td>
