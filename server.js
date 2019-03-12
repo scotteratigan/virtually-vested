@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 const express = require('express');
 
 const mongoose = require('mongoose');
@@ -16,7 +15,6 @@ if (process.env.NODE_ENV === 'production') {
   app.use(express.static('client/build'));
 }
 // Add routes, both API and view
-console.log('server.js is setting up routes...');
 app.use(routes);
 
 // Connect to the Mongo DB

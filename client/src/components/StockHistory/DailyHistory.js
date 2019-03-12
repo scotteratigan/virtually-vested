@@ -1,23 +1,23 @@
-import React, { PureComponent } from 'react';
+import React, { Component, PureComponent } from 'react';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
 } from 'recharts';
 import API from '../../utils/API';
-import Footer from '../Footer';
 
 class DailyHistory extends PureComponent {
   state = {
-    symbol: this.props.symbol || 'MSFT',
-    series: []
+    symbol: 'MSFT',
+    series: {}
   }
   componentDidMount = async () => {
     const res = await API.stockDailyHistory(this.state.symbol);
+    console.log(res.data);
     this.setState({ series: res.data });
   }
   render() {
     return (
-      <><br />
-        <h1 style= {{ marginInlineStart: '250px' }}>History for: {this.state.symbol}</h1><br />
+      <>
+        <h1>History for {this.state.symbol}</h1>
         <LineChart
           width={800}
           height={500}
@@ -32,8 +32,8 @@ class DailyHistory extends PureComponent {
           <Tooltip />
           <Legend />
           <Line type="monotone" dataKey="close" stroke="#8884d8" activeDot={{ r: 8 }} />
+          {/* <Line type="monotone" dataKey="uv" stroke="#82ca9d" /> */}
         </LineChart>
-        <Footer />
       </>
     );
   }

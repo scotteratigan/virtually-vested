@@ -1,9 +1,9 @@
 const router = require('express').Router();
 const userController = require('../../controllers/userController');
 
-// Matches with '/api/user'
-router.route('/')
-  .get(userController.findAll);
+// Matches with '/api/user/lkhasdflkjasd'
+router.route('/:token')
+  .get(userController.findByToken);
 // .post(userController.create);
 
 // Matches with '/api/user/signup'
@@ -11,8 +11,9 @@ router
   .route('/signup')
   .post(userController.create);
 
-//   .get(userController.findById)
-//   .put(userController.update)
-//   .delete(userController.remove);
+// Matches with '/api/user/login'
+router
+  .route('/login')
+  .post(userController.logInOrSignUp);
 
 module.exports = router;

@@ -5,18 +5,18 @@ import './style.css';
 // Then bind the method to the parent, and pass it to the child as a prop
 
 function CardBody(props) {
-    return (
-        <div className='counter'>
-            <button className='btn-outline-danger btn-sm' onClick={props.handleDecrement}>
+  return (
+    <div className='counter'>
+      <button className='btn-outline-danger btn-sm' onClick={props.handleDecrement}>
         -
-            </button>
-            <div className="counter-score" style={{display: 'inline-block', overflow: 'hidden' }}>{props.netChangeNumOfShares}</div>
-            
-            <button className='btn-outline-success btn-sm' onClick={props.handleIncrement}>
+      </button>
+      <div className="counter-score" style={{ display: 'inline-block', overflow: 'hidden' }}>{props.netChangeNumOfShares}</div>
+
+      <button className='btn-outline-success btn-sm' onClick={props.handleIncrement}>
         +
-            </button>
-        </div>
-    );
+      </button>
+    </div>
+  );
 }
 
 export default CardBody;

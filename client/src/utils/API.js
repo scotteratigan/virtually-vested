@@ -1,30 +1,29 @@
+/* eslint-disable no-console */
 import axios from 'axios';
 
 export default {
-    // get user. Todo: update when we have more users
-    getUser: function () {
-        return axios.get('/api/user');
-    },
-    stockDailyHistory: function (symbol) {
-        // console.log('hitting the api route...');
-        return axios.get(`/api/stock/daily/${symbol}`);
+  getUser: function (token) {
+    console.log('API.js getUser: token:', token);
+    return axios.get(`/api/user/${token}`);
+  },
+  getTrades: function (token) {
+    // todo: ensure user is authorized
+    return axios.get(`/api/transactions/${token}`);
+  },
+  getCurrentPrice: function (symbol) {
+    if (!symbol) return {};
+    return axios.get(`/api/stock/quote/${symbol}`);
+  },
+  stockDailyHistory: function (symbol) {
+    return axios.get(`/api/stock/daily/${symbol}`);
+  },
+  logUserIn: function (userToken) {
+    console.log('API.logUserIn: should be calling a POST to /api/user/login');
+    console.log('passing in token:', userToken);
+    try {
+      return axios.post(`/api/user/login?user=${userToken}`);
+    } catch (err) {
+      console.err('API.js POST error:', err);
     }
-
-    /*,
-  // Gets all books
-  getBooks: function () {
-    return axios.get('/api/books');
-  },
-  // Gets the book with the given id
-  getBook: function (id) {
-    return axios.get('/api/books/' + id);
-  },
-  // Deletes the book with the given id
-  deleteBook: function (id) {
-    return axios.delete('/api/books/' + id);
-  },
-  // Saves a book to the database
-  saveBook: function (bookData) {
-    return axios.post('/api/books', bookData);
-  }*/
+  }
 };
