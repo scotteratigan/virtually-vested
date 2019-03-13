@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import Jumbotron from '../components/Jumbotron';
 import API from '../utils/API';
 // import { Link } from 'react-router-dom';
@@ -11,7 +11,8 @@ import ActionBtns from '../components/ActionBtns';
 import Button from 'react-bootstrap/Button';
 import Footer from '../components/Footer';
 import Logo from '../images/logo.png';
-import CardBody from "../components/Counter/CardBody";
+import '../components/Counter/style.css';
+import update from "react-addons-update";
 
 // let allUniqueSymbols = [];
 // let currentPrices = [];
@@ -25,18 +26,34 @@ class Portfolio extends Component {
     portfolioValue: 0,
     tradeHistory: [],
     selectedStock: null, // todo: determine data type
-    currentPortfolio: [{
-      symbol: '',
-      sharesOwned: 0,
-      totalCostBasis: 0,
-      currentCostPerShare: 0,
-      netChangeNumOfShares: 0
-    }]
+    currentPortfolio: [],
+    workingPortfolio: [],
+    count: 0
   };
 
-  // componentDidMount() {
-  //   this.loadUserData();
-  // }
+  loadPortfolioData = () => {
+    const currentPortfolio = this.props.stockPortfolio
+    const workingPortfolio = currentPortfolio.map(element => ({netShareChange: 0 ,...element}))
+    this.setState({ currentPortfolio: currentPortfolio });
+    this.setState({ workingPortfolio: workingPortfolio })
+  }
+
+
+
+  componentDidMount() {
+    this.loadPortfolioData();
+  }
+  
+
+    handleIncrement = () => {
+      this.setState({ netShareChange: this.state.netShareChange + 1 });
+      console.log("Increment value: " + JSON.stringify(this.state.netShareChange));
+    };
+
+    handleDecrement = () => {
+      this.setState({ netShareChange: this.state.netShareChange - 1 });
+      console.log("Decrement value: " + JSON.stringify(this.state.netShareChange));
+    };
 
   // loadUserData = () => {
   //   // todo: retry if db connection fails
@@ -77,34 +94,6 @@ class Portfolio extends Component {
   // };
 
 
-
-
-  // handleIncrement increases this.state.count by 1
-  handleIncrement = () => {
-    // We always use the setState method to update a component's state
-    this.setState({ netChangeNumOfShares: this.state.netChangeNumOfShares + 1 });
-  }
-
-  // handleDecrement decreases this.state.count by 1
-  handleDecrement = () => {
-    // We always use the setState method to update a component's state
-    this.setState({ netChangeNumOfShares: this.state.netChangeNumOfShares - 1 });
-  }
-
-  // By extending the React.Component class, Counter inherits functionality from it
-  Counter = () => {
-    // The render method returns the JSX that should be rendered
-    return (
-      <div className="card text-center">
-        <CardBody
-          netChangeNumOfShares={this.state.netChangeNumOfShares}
-          handleIncrement={this.handleIncrement}
-          handleDecrement={this.handleDecrement}
-        />
-      </div>
-    );
-  }
-
   render() {
     return (
       <Container fluid>
@@ -141,7 +130,7 @@ class Portfolio extends Component {
                 </thead>
                 <tbody>
                   {console.log('PORTFOLIO.JS line 143 this.props.stockPortfolio:', this.props.stockPortfolio)}
-                  {this.props.stockPortfolio.map(stock => (
+                  {this.state.workingPortfolio.map(stock => (
                     <tr key={stock.tickerSymbol} className={'list-group-item-action'} >
                       <td style={{ display: 'block' }}>{stock.tickerSymbol}</td>
                       {/* <td style={{ display: 'block' }}><a href={'link to company website from API call here'}>{trade.name}</a></td> */}
@@ -153,14 +142,27 @@ class Portfolio extends Component {
                       <td>{'calc using API data'}</td>
                       <td>{'calc using API data'}</td>
                       <td style={{ columnCount: 3 }}>
-                        <React.Fragment>
                           <td style={{ display: 'block' }}><ActionBtns /></td>
-                          <td style={{ display: 'block' }}>{this.Counter()} </td>
+                          <td style={{ display: 'block' }}>
+                          <div className="card text-center">
+          <div className='counter' count={stock.netShareChange} name={stock.tickerSymbol} 
+          handleIncrement={this.handleIncrement}
+          handleDecrement={this.handleDecrement}>
+          <button className='btn-outline-danger btn-sm' onClick={this.handleDecrement}>
+          -
+          </button>
+            <div className="counter-score" style={{display: 'inline-block', overflow: 'hidden' }}>{stock.netShareChange}</div>
+              
+          <button className='btn-outline-success btn-sm' onClick={this.handleIncrement}>
+          +
+          </button>
+          </div>
+        </div>
+                          </td>
                           <td style={{ fontSize: '.75rem', display: 'block' }}>Est. Total Gain/Loss: {'calc using API data'}</td>
                           <td style={{ fontSize: '.75rem', display: 'block' }}>Est. New Cash on Hand: {'calc using API data'}</td>
                           <td style={{ fontSize: '.75rem', display: 'block' }}>Est. New Portfolio Value: {'calc using API data'}</td>
                           <td style={{ fontSize: '.75rem', display: 'block' }}>Est. New Portfolio % Gain/Loss: {'calc using API data'}</td>
-                        </React.Fragment>
                       </td>
 
 
