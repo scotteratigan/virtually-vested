@@ -45,14 +45,17 @@ class Portfolio extends Component {
   }
   
 
-    handleIncrement = () => {
-      this.setState({ netShareChange: this.state.netShareChange + 1 });
-      console.log("Increment value: " + JSON.stringify(this.state.netShareChange));
+    handleIncrement = (index) => {
+      let tempPortfolio = [ ...this.state.workingPortfolio];
+      tempPortfolio[index].netShareChange += 1 
+      this.setState({ workingPortfolio: tempPortfolio });
+      // console.log("Increment value: " + JSON.stringify(this.state.netShareChange));
     };
 
-    handleDecrement = () => {
-      this.setState({ netShareChange: this.state.netShareChange - 1 });
-      console.log("Decrement value: " + JSON.stringify(this.state.netShareChange));
+    handleDecrement = (index) => {
+      let tempPortfolio = [ ...this.state.workingPortfolio];
+      tempPortfolio[index].netShareChange -= 1 
+      this.setState({ workingPortfolio: tempPortfolio });
     };
 
   // loadUserData = () => {
@@ -130,7 +133,7 @@ class Portfolio extends Component {
                 </thead>
                 <tbody>
                   {console.log('PORTFOLIO.JS line 143 this.props.stockPortfolio:', this.props.stockPortfolio)}
-                  {this.state.workingPortfolio.map(stock => (
+                  {this.state.workingPortfolio.map((stock, index) => (
                     <tr key={stock.tickerSymbol} className={'list-group-item-action'} >
                       <td style={{ display: 'block' }}>{stock.tickerSymbol}</td>
                       {/* <td style={{ display: 'block' }}><a href={'link to company website from API call here'}>{trade.name}</a></td> */}
@@ -145,19 +148,26 @@ class Portfolio extends Component {
                           <td style={{ display: 'block' }}><ActionBtns /></td>
                           <td style={{ display: 'block' }}>
                           <div className="card text-center">
-          <div className='counter' count={stock.netShareChange} name={stock.tickerSymbol} 
-          handleIncrement={this.handleIncrement}
-          handleDecrement={this.handleDecrement}>
-          <button className='btn-outline-danger btn-sm' onClick={this.handleDecrement}>
-          -
-          </button>
-            <div className="counter-score" style={{display: 'inline-block', overflow: 'hidden' }}>{stock.netShareChange}</div>
-              
-          <button className='btn-outline-success btn-sm' onClick={this.handleIncrement}>
-          +
-          </button>
-          </div>
-        </div>
+
+                          {/* Counter Div */}
+                          <div className='counter' count={stock.netShareChange} name={stock.tickerSymbol} 
+                          handleIncrement={this.handleIncrement}
+                          handleDecrement={this.handleDecrement}>
+
+                          {/* Decrement button */}
+                          <button className='btn-outline-danger btn-sm' onClick={()=>this.handleDecrement(index)}>
+                          -
+                          </button>
+
+                          {/* Score display */}
+                            <div className="counter-score" style={{display: 'inline-block', overflow: 'hidden' }}>{stock.netShareChange}</div>
+                            
+                              {/* Increment button */}
+                          <button className='btn-outline-success btn-sm' onClick={()=>this.handleIncrement(index)}>
+                          +
+                          </button>
+                          </div>
+                        </div>
                           </td>
                           <td style={{ fontSize: '.75rem', display: 'block' }}>Est. Total Gain/Loss: {'calc using API data'}</td>
                           <td style={{ fontSize: '.75rem', display: 'block' }}>Est. New Cash on Hand: {'calc using API data'}</td>
