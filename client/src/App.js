@@ -106,7 +106,8 @@ class App extends Component {
   }
 
   submitTrade = transData => {
-    alert(JSON.stringify(transData));
+    console.log('App.js submitTrade firing:', JSON.stringify(transData));
+    API.makeTrade({ trades: transData, token: this.state.user.token });
   }
 
   render() {

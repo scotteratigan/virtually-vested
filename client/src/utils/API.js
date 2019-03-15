@@ -16,14 +16,9 @@ export default {
   },
   stockDailyHistory: function (symbol) {
     return axios.get(`/api/stock/daily/${symbol}`);
-  }/*,
-  logUserIn: function (userToken) {
-    console.log('API.logUserIn: should be calling a POST to /api/user/login');
-    console.log('passing in token:', userToken);
-    try {
-      return axios.post(`/api/user/login?user=${userToken}`);
-    } catch (err) {
-      console.err('API.js POST error:', err);
-    }
-  }*/
+  },
+  makeTrade: function (tradeData) {
+    console.log('inside API.js, calling axios.post with data:', JSON.stringify(tradeData));
+    return axios.post('/api/transactions/', tradeData);
+  }
 };

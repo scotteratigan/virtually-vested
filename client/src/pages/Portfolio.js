@@ -80,10 +80,10 @@ class Portfolio extends Component {
   }
 
   formatTradeData = () => {
-    const temp = this.state.workingPortfolio
-      .filter(stock => stock.netShareChange != 0)
+    const submitData = this.state.workingPortfolio
+      .filter(stock => stock.netShareChange !== 0)
       .map(stock => ({ symbol: stock.tickerSymbol, net: stock.netShareChange }));
-    this.props.submitTrade(temp);
+    this.props.submitTrade(submitData);
   }
 
   render() {
