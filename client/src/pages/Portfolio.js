@@ -12,7 +12,7 @@ import Button from 'react-bootstrap/Button';
 import Footer from '../components/Footer';
 import Logo from '../images/logo.png';
 import '../components/Counter/style.css';
-// import update from "react-addons-update";
+// import update from 'react-addons-update';
 
 // let allUniqueSymbols = [];
 // let currentPrices = [];
@@ -34,7 +34,7 @@ class Portfolio extends Component {
 
   deleteStock = index => {
     if (this.state.workingPortfolio[index].quantity > 0) {
-      alert("Can't delete a stock you own!"); // todo: replace with modal
+      alert('Can\'t delete a stock you own!'); // todo: replace with modal
       return;
     }
     this.state.workingPortfolio.splice(index, 1);
@@ -61,7 +61,7 @@ class Portfolio extends Component {
     let tempPortfolio = [...this.state.workingPortfolio];
     tempPortfolio[index].netShareChange += 1
     this.setState({ workingPortfolio: tempPortfolio });
-    // console.log("Increment value: " + JSON.stringify(this.state.netShareChange));
+    // console.log('Increment value: ' + JSON.stringify(this.state.netShareChange));
   };
 
   handleDecrement = (index) => {
@@ -79,12 +79,12 @@ class Portfolio extends Component {
               <img src={Logo} alt='Virtually Vested' />
               <h1>Stock Portfolio</h1>
               <h3>{this.state.name}</h3>
-              <div className=""><p style={{ textDecoration: 'underline' }}>Starting Cash:</p> {formatCash(this.props.user.startingCash)}</div>
+              <div className=''><p style={{ textDecoration: 'underline' }}>Starting Cash:</p> {formatCash(this.props.user.startingCash)}</div>
               <div><p style={{ textDecoration: 'underline' }}>Cash on Hand:</p> {formatCash(this.props.user.cash)}</div>
               <div><p style={{ textDecoration: 'underline' }}>Total Gain/Loss:</p> {formatCash(this.state.currentCash - this.state.startCash)}</div>
+              // todo: use formatCash in below?:
               <div><p style={{ textDecoration: 'underline' }}>% Total Gain/Loss:</p> {(((this.state.currentCash - this.state.startCash) / this.state.startCash) * 100).toFixed(2)}%</div>
-              {/* Rank state data goes below */}
-              <div><p style={{ textDecoration: 'underline' }}>Rank:</p> {"X"} of {"X"}</div>
+              // <div><p style={{ textDecoration: 'underline' }}>Rank:</p> {'X'} of {'X'}</div>
             </Jumbotron>
             <SearchStocks clickFunction={this.addStockToPortfolio} buttonLabel='Add Stock to Portfolio' />
             <div className='table-responsive' style={{ backgroundColor: '#5B45B9', color: 'white', width: 'auto', paddingTop: '5px' }}><h3 className='text-center'>Current Portfolio</h3></div>
@@ -92,16 +92,17 @@ class Portfolio extends Component {
               <table className='table table-bordered table-hover table-sm'>
                 <thead className='thead-dark'>
                   <tr>
-                    <th scope="col" className='text-center'>Symbol
+                    <th scope='col' className='text-center'>Symbol
                         {'\n'}Company Name</th>
-                    <th scope="col" className='text-center'>Qty</th>
-                    <th scope="col" className='text-right'>Current Price / Share</th>
-                    <th scope="col" className='text-right'>Current Value</th>
-                    <th scope="col" className='text-right'>Cost Basis per Share</th>
-                    <th scope="col" className='text-right'>Total Cost Basis</th>
-                    <th scope="col" className='text-right'>Total Gain/Loss</th>
-                    <th scope="col" className='text-right'>% Total Gain/Loss</th>
-                    <th scope="col" className='text-center'>Buy/Sell Action Selection & Estimated Impact</th>
+                    <th scope='col' className='text-center'>Qty</th>
+                    <th scope='col' className='text-right'>Current Price / Share</th>
+                    <th scope='col' className='text-right'>Current Value</th>
+                    <th scope='col' className='text-right'>Cost Basis per Share</th>
+                    <th scope='col' className='text-right'>Total Cost Basis</th>
+                    <th scope='col' className='text-right'>Total Gain/Loss</th>
+                    <th scope='col' className='text-right'>% Total Gain/Loss</th>
+                    <th scope='col' className='text-center'>Buy/Sell Action Selection & Estimated Impact</th>
+                    <th scope='col'></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -123,7 +124,7 @@ class Portfolio extends Component {
                       <td style={{ columnCount: 3 }}>
                         <td style={{ display: 'block' }}><ActionBtns /></td>
                         <td style={{ display: 'block' }}>
-                          <div className="card text-center">
+                          <div className='card text-center'>
 
                             {/* Counter Div */}
                             <div className='counter' count={stock.netShareChange} name={stock.tickerSymbol}
@@ -133,16 +134,16 @@ class Portfolio extends Component {
                               {/* Decrement button */}
                               <button className='btn-outline-danger btn-sm' onClick={() => this.handleDecrement(index)}>
                                 -
-                          </button>
+                              </button>
 
                               {/* Score display */}
-                              <div className="counter-score" style={{ display: 'inline-block', overflow: 'hidden' }}>{stock.netShareChange}</div>
+                              <div className='counter-score' style={{ display: 'inline-block', overflow: 'hidden' }}>{stock.netShareChange}</div>
 
                               {/* Increment button */}
                               <button className='btn-outline-success btn-sm' onClick={() => this.handleIncrement(index)}>
                                 +
-                          </button>
-                              <button onClick={() => this.deleteStock(index)}>delete</button>
+                              </button>
+                              
                             </div>
                           </div>
                         </td>
@@ -151,8 +152,7 @@ class Portfolio extends Component {
                         <td style={{ fontSize: '.75rem', display: 'block' }}>Est. New Portfolio Value: {'calc using API data'}</td>
                         <td style={{ fontSize: '.75rem', display: 'block' }}>Est. New Portfolio % Gain/Loss: {'calc using API data'}</td>
                       </td>
-
-
+                      <td><button className={'btn ' + stock.quantity ? 'btn-secondary' : 'btn-danger'} onClick={() => this.deleteStock(index)}>delete</button></td>
                       {/* <td className='text-right'><Moment format='MM-DD-YYYY HH:mm a'>{trade.date}</Moment></td> */}
                     </tr>
 
