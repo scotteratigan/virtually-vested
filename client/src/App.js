@@ -127,6 +127,7 @@ class App extends Component {
               render={(props) => <TradeHistory {...props}
                 transactions={this.state.transactions}
                 stockInfo={this.state.stockInfo}
+                rerenderStockInfo={this.state.rerenderStockInfo}
                 user={this.state.user} />}
             />
             <Route exact path='/stockhistory' component={StockHistory} />
