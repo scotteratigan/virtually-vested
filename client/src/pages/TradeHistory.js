@@ -24,15 +24,15 @@ class TradeHistory extends Component {
         <Jumbotron>
           <h1>Trade History</h1>
         </Jumbotron>
-        <div><h3 className='text-center'>Trade History</h3></div>
         {this.props.transactions ? (
           <table className='table'>
             <thead>
               <tr>
                 <th scope='col' className='text-center'>Symbol/Name</th>
                 <th scope='col' className='text-center'>Order</th>
-                <th scope='col' className='text-center'>Qty</th>
+                <th scope='col' className='text-right'>Qty</th>
                 <th scope='col' className='text-right'>Cost Basis</th>
+                <th scope='col' className='text-right'>Transaction Time</th>
                 <th scope='col' className='text-right'>Current Value</th>
                 <th scope='col' className='text-right'>Net per Share</th>
                 <th scope='col' className='text-right'>Net Total</th>
@@ -41,10 +41,12 @@ class TradeHistory extends Component {
             <tbody>
               {this.props.transactions.map(trade => (
                 <tr key={trade._id} className={'list-group-item-action'} >
-                  <td style={{ display: 'block' }}>{trade.tickerSymbol}</td>
-                  <td>{trade.quantity > 0 ? 'buy' : 'sell'}</td>
+                  <td className='text-center'>{trade.tickerSymbol}</td>
+                  <td className='text-center'>{trade.quantity > 0 ? 'buy' : 'sell'}</td>
                   <td className='text-right'>{Math.abs(trade.quantity)}</td>
                   <td className='text-right'>{formatCash(Math.abs(trade.centsTotal / trade.quantity))}</td>
+                  {/* todo: format date nicer */}
+                  <td className='text-right'>{trade.date}</td>
                   <td className='text-right'>{formatCash(this.stockPrice(trade))}</td>
                   <td className='text-right'>{formatCash(this.netChange(trade))}</td>
                   <td className='text-right'>{formatCash(this.netChange(trade) * Math.abs(trade.quantity))}</td>
