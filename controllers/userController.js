@@ -21,6 +21,7 @@ module.exports = {
     console.log('FIND BY TOKEN IS HITTING.')
     console.log(CircularJSON.stringify(req.params));
     const { token, email } = req.params;
+    console.log(`performing findOne({token: "${token}"}) `)
     db.User.findOne({ 'token': token })
       .then(dbRes => {
         console.log('in db.User.findOne.then routine...');

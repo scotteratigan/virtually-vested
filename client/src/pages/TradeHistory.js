@@ -3,7 +3,6 @@ import Jumbotron from '../components/Jumbotron';
 import { Col, Row, Container } from '../components/Grid';
 import { formatCash } from '../utils/misc';
 
-
 const TradeHistory = props => {
   return (
     <Container fluid>

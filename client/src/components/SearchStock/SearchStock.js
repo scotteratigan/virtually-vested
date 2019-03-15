@@ -1,8 +1,5 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import API from '../../utils/API';
-
-//todo - add company name w/ special delimiter char
 
 class SearchStocks extends Component {
 	state = {
@@ -10,18 +7,15 @@ class SearchStocks extends Component {
 		tickerSearchResults: []
 	}
 
-	handleAddStockBtn = event => {
+	handleBtnClick = event => {
 		event.preventDefault();
 		const searchSymbol = this.state.searchTerm.substring(0, this.state.searchTerm.indexOf('-') - 1);
-		alert('You selected: ' + searchSymbol);
-		const apiURL = `/api/stock/quote/${searchSymbol}`;
-		axios.get(apiURL).then(res => {
-			// todo: don't update list user clicks on suggestion
-			console.log('res.data:', res.data);
-		});
+		this.props.clickFunction(this.state.searchTerm); // clickFunction must be passed down via props
+		this.setState({ searchTerm: '' });
 	}
 
 	handleKeyInput = async (event) => {
+		// todo: add debouncer here?
 		console.log(event.nativeEvent);
 		// when you type, nativeEvent is an InputEvent and has a data attribute
 		// when you click, nativeEvent is an Event and has type: input
@@ -31,7 +25,6 @@ class SearchStocks extends Component {
 			const apiURL = `/api/stock/return_symbols/${this.state.searchTerm}`;
 			console.log('Getting URL:', apiURL);
 			axios.get(apiURL).then(res => {
-				// todo: don't update list user clicks on suggestion
 				console.log('res.data:', res.data);
 				this.setState({ tickerSearchResults: res.data });
 			});
@@ -42,7 +35,7 @@ class SearchStocks extends Component {
 		return (
 			<form className="search">
 				<div className="form-group">
-					<label htmlFor="company" style={{ fontWeight: 'bold'}}>Enter Company Name or Ticker Symbol here:</label>
+					<label htmlFor="company" style={{ fontWeight: 'bold' }}>Enter Company Name or Ticker Symbol here:</label>
 					<input
 						value={this.state.searchTerm}
 						onChange={this.handleKeyInput}
@@ -60,7 +53,7 @@ class SearchStocks extends Component {
 						)) : ''}
 					</datalist>
 					<br />
-					<button onClick={this.handleAddStockBtn} className="btn btn-info">Add Stock to List</button>
+					<button onClick={this.handleBtnClick} className="btn btn-info">{this.props.buttonLabel}</button>
 				</div>
 				<br />
 			</form>
