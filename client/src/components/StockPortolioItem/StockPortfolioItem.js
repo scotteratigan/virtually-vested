@@ -4,24 +4,6 @@ import { formatCash } from '../../utils/misc';
 import StockPortfolioCounter from '../StockPortfolioCounter/StockPortfolioCounter';
 // import '../components/Counter/style.css';
 class StockPortfolioItem extends Component {
-  // state = {
-  //   ttlCostBasisCents: '',
-  //   currValCents: '',
-  //   ttlValCents: '',
-  //   netChange: '',
-  //   pctChange: '',
-  //   fmtPctChange: ''
-  // }
-
-  // componentDidMount = () => {
-  //   const ttlCostBasisCents = Math.abs(this.props.stock.centsTotal);
-  //   const currValCents = this.getStockPrice(this.props.stock.tickerSymbol);
-  //   const ttlValCents = currValCents * this.props.stock.quantity;
-  //   const netChange = ttlValCents - ttlCostBasisCents;
-  //   const pctChange = (((ttlValCents / ttlCostBasisCents) - 1) * 100).toFixed(2);
-  //   const fmtPctChange = pctChange < 0 ? '- $' + Math.abs(pctChange).toString() : '+ $' + pctChange.toString();
-  //   this.setState({ ttlCostBasisCents, currValCents, ttlValCents, netChange, pctChange, fmtPctChange });
-  // }
 
   getStockPrice = tickerSymbol => {
     if (!this.props.stockInfo[tickerSymbol]) return '';
@@ -34,39 +16,20 @@ class StockPortfolioItem extends Component {
   netChange = this.ttlValCents - this.ttlCostBasisCents;
   pctChange = (((this.ttlValCents / this.ttlCostBasisCents) - 1) * 100).toFixed(2);
   fmtPctChange = this.pctChange < 0 ? '- $' + Math.abs(this.pctChange).toString() : '+ $' + this.pctChange.toString();
-  // areEqualShallow(a, b) {
-  //   for (var key in a) {
-  //     if (a[key] !== b[key]) {
-  //       return false;
-  //     }
-  //   }
-  //   return true;
-  // }
 
-  // shouldComponentUpdate(nextProps, nextState) {
-  //   if (!this.areEqualShallow(this.props, nextProps)) return true;
-  //   console.log('shouldComponentUpdate?');
-  //   console.log('this.props:', this.props);
-  //   console.log('nextProps:', nextProps);
-  //   if (this.props.stockInfo) {
-  //     if (Object.keys(this.props.stockInfo).length != Object.keys(nextProps.stockInfo).length) {
-  //       return true;
-  //     }
-  //   }
-  //   return false;
-  // }
-
-  // componentWillReceiveProps(nextProps) {
-
-  //   if (JSON.stringify(this.props.stockInfo) !== JSON.stringify(nextProps.stockInfo)) {
-  //     alert('rerender!');
-  //     // this.render();
-  //   }
-  // }
   calculateImpact = () => {
     const symbol = this.props.stock.tickerSymbol;
     if (!this.props.stockInfo[symbol]) return '';
     return formatCash(-this.props.stock.netShareChange * this.props.stockInfo[symbol].price);
+  }
+
+  getLink = () => {
+    if (!this.props.stockInfo[this.props.stock.tickerSymbol]) {
+      // if we don't have the company name, search by ticker symbol
+      return `https://news.google.com/search?q=${this.props.stock.tickerSymbol}`;
+    }
+    // otherwise, search by company name
+    return `https://news.google.com/search?q=${this.props.stockInfo[this.props.stock.tickerSymbol].companyName}`;
   }
 
   render() {
@@ -77,7 +40,8 @@ class StockPortfolioItem extends Component {
           {/* ticker symbol: */}
           {this.props.stock.tickerSymbol} <br />
           {/* link to company news: */}
-          {'link...'}
+          {/*  */}
+          <a href={this.getLink()} target='blank'>News</a>
         </td>
         <td className='text-right'>
           {/* quantity: */}
@@ -113,7 +77,7 @@ class StockPortfolioItem extends Component {
         <td className='text-right'>
           {this.calculateImpact()}
         </td>
-      </tr>
+      </tr >
     );
   }
 }

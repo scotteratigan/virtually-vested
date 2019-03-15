@@ -105,6 +105,10 @@ class App extends Component {
     });
   }
 
+  submitTrade = transData => {
+    alert(JSON.stringify(transData));
+  }
+
   render() {
     return (
       <Router>
@@ -124,7 +128,8 @@ class App extends Component {
                 rerenderStockInfo={this.state.rerenderStockInfo}
                 user={this.state.user}
                 getNewStockInfo={this.getNewStockInfo}
-                portfolioValue={this.state.portfolioValue} />}
+                portfolioValue={this.state.portfolioValue}
+                submitTrade={this.submitTrade} />}
             />
             <Route exact
               path='/trades'

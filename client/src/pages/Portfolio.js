@@ -79,6 +79,13 @@ class Portfolio extends Component {
     // todo: if we click sell but qty is greater than qty owned, change qty to qty owned
   }
 
+  formatTradeData = () => {
+    const temp = this.state.workingPortfolio
+      .filter(stock => stock.netShareChange != 0)
+      .map(stock => ({ symbol: stock.tickerSymbol, net: stock.netShareChange }));
+    this.props.submitTrade(temp);
+  }
+
   render() {
     return (
       <>
@@ -143,7 +150,7 @@ class Portfolio extends Component {
                 </tbody>
               </table>
               <SearchStocks clickFunction={this.addStockToPortfolio} buttonLabel='Add Stock to Portfolio' prompt='Stock to add' />
-              <Button variant='outline-success' size='lg' block style={{ margin: '1rem' }}>Make Trade!</Button>
+              <Button variant='outline-success' size='lg' block style={{ margin: '1rem' }} onClick={() => this.formatTradeData()}>Make Trade!</Button>
             </>
           ) : (
               // todo: timeout at some point?

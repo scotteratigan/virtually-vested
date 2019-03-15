@@ -21,13 +21,13 @@ class StockPortfolioCounter extends Component {
         {/* todo: force buy/sell on same line */}
         <Row className='text-center'>
           <Col size='sm-6' className='text-center'>
-            <button className='mx-auto' onClick={this.handleBuyClick}
+            <button onClick={this.handleBuyClick}
               className={this.state.buyMode ? 'btn btn-primary' : 'btn btn-outline-info'}>
               Buy
             </button>
           </Col>
           <Col size='sm-6' className='text-center'>
-            <button className='mx-auto' onClick={this.handleSellClick}
+            <button onClick={this.handleSellClick}
               className={!this.state.buyMode ? 'btn btn-primary' : 'btn btn-outline-info'}>
               Sell
             </button>
