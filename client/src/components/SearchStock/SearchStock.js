@@ -10,7 +10,7 @@ class SearchStocks extends Component {
 	handleBtnClick = event => {
 		event.preventDefault();
 		const searchSymbol = this.state.searchTerm.substring(0, this.state.searchTerm.indexOf('-') - 1);
-		this.props.clickFunction(this.state.searchTerm); // clickFunction must be passed down via props
+		this.props.clickFunction(searchSymbol); // clickFunction must be passed down via props
 		this.setState({ searchTerm: '' });
 	}
 
@@ -53,7 +53,7 @@ class SearchStocks extends Component {
 						)) : ''}
 					</datalist>
 					<br />
-					<button onClick={this.handleBtnClick} className="btn btn-info">{this.props.buttonLabel}</button>
+					<button onClick={this.handleBtnClick} className="btn btn-primary">{this.props.buttonLabel}</button>
 				</div>
 				<br />
 			</form>
