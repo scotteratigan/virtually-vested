@@ -76,7 +76,6 @@ class App extends Component {
   }
 
   getAllStockInfo = () => {
-    console.log('Ready to grab prices...');
     const stockInfoPromises = this.state.stockPortfolio.map(async stock => {
       return API.getCurrentPrice(stock.tickerSymbol);
     });
@@ -87,6 +86,19 @@ class App extends Component {
         stockInfo[data.tickerSymbol] = { ...data };
       });
       this.setState({ stockInfo, rerenderStockInfo: !this.state.rerenderStockInfo });
+    });
+  }
+
+  getNewStockInfo = tickerSymbol => {
+    return new Promise((resolve, reject) => {
+      API.getCurrentPrice(tickerSymbol).then(res => {
+        const stockInfoToAdd = res.data;
+        const updatedStockInfo = { ...this.state.stockInfo };
+        updatedStockInfo[tickerSymbol] = stockInfoToAdd;
+        this.setState({ stockInfo: updatedStockInfo }, () => {
+          return resolve();
+        })
+      });
     });
   }
 
@@ -107,7 +119,8 @@ class App extends Component {
                 stockPortfolio={this.state.stockPortfolio}
                 stockInfo={this.state.stockInfo}
                 rerenderStockInfo={this.state.rerenderStockInfo}
-                user={this.state.user} />}
+                user={this.state.user}
+                getNewStockInfo={this.getNewStockInfo} />}
             />
             <Route exact
               path='/trades'

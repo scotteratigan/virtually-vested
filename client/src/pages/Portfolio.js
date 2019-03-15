@@ -3,9 +3,6 @@ import Jumbotron from '../components/Jumbotron';
 import { Col, Row, Container } from '../components/Grid';
 import { formatCash } from '../utils/misc';
 import SearchStocks from '../components/SearchStock/SearchStock';
-// import ActionBtns from '../components/ActionBtns';
-// import Counter from '../components/Counter';
-// import Moment from 'react-moment';
 import Button from 'react-bootstrap/Button';
 import Footer from '../components/Footer';
 import Logo from '../images/logo.png';
@@ -43,23 +40,13 @@ class Portfolio extends Component {
     this.loadPortfolioData();
   }
 
-  addStockToPortfolio = ticker => {
+  addStockToPortfolio = async ticker => {
+    // wait to get new stock info before updating array to include new stock listing:
+    await this.props.getNewStockInfo(ticker);
     const updatedPortfolio = [...this.state.workingPortfolio];
     updatedPortfolio.unshift({ centsTotal: 0, netShareChange: 0, quantity: 0, tickerSymbol: ticker }); // todo: replace with push but then render in opposite order
     this.setState({ workingPortfolio: updatedPortfolio });
   }
-
-  // handleIncrement = (index) => {
-  //   let tempPortfolio = [...this.state.workingPortfolio];
-  //   tempPortfolio[index].netShareChange += 1
-  //   this.setState({ workingPortfolio: tempPortfolio });
-  // };
-
-  // handleDecrement = (index) => {
-  //   let tempPortfolio = [...this.state.workingPortfolio];
-  //   tempPortfolio[index].netShareChange -= 1
-  //   this.setState({ workingPortfolio: tempPortfolio });
-  // };
 
   handleQtyChange = (index, action) => {
     // index is position in array, doIncrement is boolean, true means add, false means subtract
@@ -135,12 +122,12 @@ class Portfolio extends Component {
               </thead>
               <tbody>
                 {this.state.workingPortfolio.map((stock, index) => (
-                  <StockPortfolioItem key={index} stock={stock} index={index} stockInfo={this.props.stockInfo} rerenderStockInfo={this.props.rerenderStockInfo}
+                  <StockPortfolioItem key={stock.tickerSymbol} stock={stock} index={index} stockInfo={this.props.stockInfo} rerenderStockInfo={this.props.rerenderStockInfo}
                     workingPortfolio={this.state.workingPortfolio} handleQtyChange={this.handleQtyChange} />
                 ))}
               </tbody>
             </table>
-            <SearchStocks clickFunction={this.addStockToPortfolio} buttonLabel='Add Stock to Portfolio' />
+            <SearchStocks clickFunction={this.addStockToPortfolio} buttonLabel='Add Stock to Portfolio' prompt='Stock to add' />
             <Button variant='outline-success' size='lg' block style={{ margin: '1rem' }}>Make Trade!</Button>
           </>
         ) : (
