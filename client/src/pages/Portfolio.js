@@ -1,21 +1,15 @@
 import React, { Component, useState } from 'react';
 import Jumbotron from '../components/Jumbotron';
-import API from '../utils/API';
-// import { Link } from 'react-router-dom';
 import { Col, Row, Container } from '../components/Grid';
 import { formatCash } from '../utils/misc';
 import SearchStocks from '../components/SearchStock/SearchStock';
-import ActionBtns from '../components/ActionBtns';
+// import ActionBtns from '../components/ActionBtns';
 // import Counter from '../components/Counter';
 // import Moment from 'react-moment';
 import Button from 'react-bootstrap/Button';
 import Footer from '../components/Footer';
 import Logo from '../images/logo.png';
-import '../components/Counter/style.css';
-// import update from 'react-addons-update';
-
-// let allUniqueSymbols = [];
-// let currentPrices = [];
+import StockPortfolioItem from '../components/StockPortolioItem/StockPortfolioItem';
 
 class Portfolio extends Component {
   state = {
@@ -29,8 +23,6 @@ class Portfolio extends Component {
     workingPortfolio: [],
     count: 0
   };
-
-  // todo: add stock to list button should clear input field
 
   deleteStock = index => {
     if (this.state.workingPortfolio[index].quantity > 0) {
@@ -57,18 +49,28 @@ class Portfolio extends Component {
     this.setState({ workingPortfolio: updatedPortfolio });
   }
 
-  handleIncrement = (index) => {
-    let tempPortfolio = [...this.state.workingPortfolio];
-    tempPortfolio[index].netShareChange += 1
-    this.setState({ workingPortfolio: tempPortfolio });
-    // console.log('Increment value: ' + JSON.stringify(this.state.netShareChange));
-  };
+  // handleIncrement = (index) => {
+  //   let tempPortfolio = [...this.state.workingPortfolio];
+  //   tempPortfolio[index].netShareChange += 1
+  //   this.setState({ workingPortfolio: tempPortfolio });
+  // };
 
-  handleDecrement = (index) => {
-    let tempPortfolio = [...this.state.workingPortfolio];
-    tempPortfolio[index].netShareChange -= 1
+  // handleDecrement = (index) => {
+  //   let tempPortfolio = [...this.state.workingPortfolio];
+  //   tempPortfolio[index].netShareChange -= 1
+  //   this.setState({ workingPortfolio: tempPortfolio });
+  // };
+
+  handleQtyChange = (index, action) => {
+    // index is position in array, doIncrement is boolean, true means add, false means subtract
+    const tempPortfolio = [...this.state.workingPortfolio];
+    if (action === '+') tempPortfolio[index].netShareChange += 1;
+    else if (action === '-') {
+      // subtract, but not below zero:
+      if (Math.abs(tempPortfolio[index].netShareChange) > 0) tempPortfolio[index].netShareChange -= 1;
+    }
     this.setState({ workingPortfolio: tempPortfolio });
-  };
+  }
 
   render() {
     return (
@@ -82,9 +84,9 @@ class Portfolio extends Component {
               <div className=''><p style={{ textDecoration: 'underline' }}>Starting Cash:</p> {formatCash(this.props.user.startingCash)}</div>
               <div><p style={{ textDecoration: 'underline' }}>Cash on Hand:</p> {formatCash(this.props.user.cash)}</div>
               <div><p style={{ textDecoration: 'underline' }}>Total Gain/Loss:</p> {formatCash(this.state.currentCash - this.state.startCash)}</div>
-              // todo: use formatCash in below?:
+              {/* todo: use formatCash in below?: */}
               <div><p style={{ textDecoration: 'underline' }}>% Total Gain/Loss:</p> {(((this.state.currentCash - this.state.startCash) / this.state.startCash) * 100).toFixed(2)}%</div>
-              // <div><p style={{ textDecoration: 'underline' }}>Rank:</p> {'X'} of {'X'}</div>
+              {/* <div><p style={{ textDecoration: 'underline' }}>Rank:</p> {'X'} of {'X'}</div> */}
             </Jumbotron>
             <SearchStocks clickFunction={this.addStockToPortfolio} buttonLabel='Add Stock to Portfolio' />
             <div className='table-responsive' style={{ backgroundColor: '#5B45B9', color: 'white', width: 'auto', paddingTop: '5px' }}><h3 className='text-center'>Current Portfolio</h3></div>
@@ -92,70 +94,22 @@ class Portfolio extends Component {
               <table className='table table-bordered table-hover table-sm'>
                 <thead className='thead-dark'>
                   <tr>
-                    <th scope='col' className='text-center'>Symbol
-                        {'\n'}Company Name</th>
+                    <th scope='col' className='text-center'>Symbol<br />Company Name</th>
                     <th scope='col' className='text-center'>Qty</th>
-                    <th scope='col' className='text-right'>Current Price / Share</th>
-                    <th scope='col' className='text-right'>Current Value</th>
-                    <th scope='col' className='text-right'>Cost Basis per Share</th>
-                    <th scope='col' className='text-right'>Total Cost Basis</th>
-                    <th scope='col' className='text-right'>Total Gain/Loss</th>
-                    <th scope='col' className='text-right'>% Total Gain/Loss</th>
+                    <th scope='col' className='text-center'>Current Price / Share</th>
+                    <th scope='col' className='text-center'>Current Value</th>
+                    <th scope='col' className='text-center'>Cost Basis per Share</th>
+                    <th scope='col' className='text-center'>Total Cost Basis</th>
+                    <th scope='col' className='text-center'>Total Gain/Loss</th>
+                    <th scope='col' className='text-center'>% Total Gain/Loss</th>
                     <th scope='col' className='text-center'>Buy/Sell Action Selection & Estimated Impact</th>
                     <th scope='col'></th>
                   </tr>
                 </thead>
                 <tbody>
                   {this.state.workingPortfolio.map((stock, index) => (
-                    <tr key={stock.tickerSymbol} className={'list-group-item-action'} >
-                      <td style={{ display: 'block' }}>{stock.tickerSymbol}</td>
-                      {console.log('this.props.stockInfo:', this.props.stockInfo)}
-                      {console.log('stock.tickerSymbol', stock.tickerSymbol)}
-                      {console.log('this.props.stockInfo[stock.tickerSymbol]:', this.props.stockInfo[stock.tickerSymbol].companyName)}
-                      <td style={{ display: 'block' }}><a href={`https://news.google.com/search?q=${this.props.stockInfo[stock.tickerSymbol].companyName}`}
-                        rel='noopener noreferrer' target='_blank'>{this.props.stockInfo[stock.tickerSymbol].companyName} Info</a></td>
-                      <td>{stock.quantity}</td>
-                      <td>{'API data'}</td>
-                      <td>{'calc using API data'}</td>
-                      <td className='text-center'>{formatCash(Math.abs(stock.price))}</td>
-                      <td className='text-right'>{formatCash(Math.abs(stock.price * stock.qty))}</td>
-                      <td>{'calc using API data'}</td>
-                      <td>{'calc using API data'}</td>
-                      <td style={{ columnCount: 3 }}>
-                        <td style={{ display: 'block' }}><ActionBtns /></td>
-                        <td style={{ display: 'block' }}>
-                          <div className='card text-center'>
-
-                            {/* Counter Div */}
-                            <div className='counter' count={stock.netShareChange} name={stock.tickerSymbol}
-                              handleIncrement={this.handleIncrement}
-                              handleDecrement={this.handleDecrement}>
-
-                              {/* Decrement button */}
-                              <button className='btn-outline-danger btn-sm' onClick={() => this.handleDecrement(index)}>
-                                -
-                              </button>
-
-                              {/* Score display */}
-                              <div className='counter-score' style={{ display: 'inline-block', overflow: 'hidden' }}>{stock.netShareChange}</div>
-
-                              {/* Increment button */}
-                              <button className='btn-outline-success btn-sm' onClick={() => this.handleIncrement(index)}>
-                                +
-                              </button>
-                              
-                            </div>
-                          </div>
-                        </td>
-                        <td style={{ fontSize: '.75rem', display: 'block' }}>Est. Total Gain/Loss: {'calc using API data'}</td>
-                        <td style={{ fontSize: '.75rem', display: 'block' }}>Est. New Cash on Hand: {'calc using API data'}</td>
-                        <td style={{ fontSize: '.75rem', display: 'block' }}>Est. New Portfolio Value: {'calc using API data'}</td>
-                        <td style={{ fontSize: '.75rem', display: 'block' }}>Est. New Portfolio % Gain/Loss: {'calc using API data'}</td>
-                      </td>
-                      <td><button className={'btn ' + stock.quantity ? 'btn-secondary' : 'btn-danger'} onClick={() => this.deleteStock(index)}>delete</button></td>
-                      {/* <td className='text-right'><Moment format='MM-DD-YYYY HH:mm a'>{trade.date}</Moment></td> */}
-                    </tr>
-
+                    <StockPortfolioItem key={index} stock={stock} index={index} stockInfo={this.props.stockInfo} rerenderStockInfo={this.props.rerenderStockInfo}
+                      workingPortfolio={this.state.workingPortfolio} handleQtyChange={this.handleQtyChange} />
                   ))}
                 </tbody>
               </table>

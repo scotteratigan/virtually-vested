@@ -16,7 +16,8 @@ class App extends Component {
     userLoggedIn: false,
     transactions: [], // all buy and sell records
     stockPortfolio: [], // record of stocks currently owned
-    stockInfo: {} // current market prices
+    stockInfo: {}, // current market prices
+    rerenderStockInfo: false // a bool switch to trigger re-render of components using stock prices/info
   }
   // todo: add /tos and /privacy routes (required by Twitter login API)
 
@@ -35,11 +36,11 @@ class App extends Component {
       transactions: [],
       stockPortfolio: []
       // note: don't wipe out stock info/prices
+      // todo: delete local token
     });
   }
 
   loadUserData = user => {
-    // const { token, email } = user;
     API.getUser(user).then(res => {
       console.log('App.js loadUserData: data is loaded:', res.data);
       this.setState({ user: { ...res.data } });
@@ -65,7 +66,6 @@ class App extends Component {
         return transactions;
       }, {}
     );
-    console.log('Portfolio is:', portfolioObj);
     // now convert this object to an array:
     let stockPortfolio = [];
     for (let stock in portfolioObj) {
@@ -83,12 +83,10 @@ class App extends Component {
     const stockInfo = {};
     Promise.all(stockInfoPromises).then(responses => {
       responses.forEach(response => {
-        console.log('App.js response:', response);
         const { data } = response;
-        // console.log()
         stockInfo[data.tickerSymbol] = { ...data };
       });
-      this.setState({ stockInfo })
+      this.setState({ stockInfo, rerenderStockInfo: !this.state.rerenderStockInfo });
     });
   }
 
@@ -108,6 +106,7 @@ class App extends Component {
               render={(props) => <Portfolio {...props}
                 stockPortfolio={this.state.stockPortfolio}
                 stockInfo={this.state.stockInfo}
+                rerenderStockInfo={this.state.rerenderStockInfo}
                 user={this.state.user} />}
             />
             <Route exact
