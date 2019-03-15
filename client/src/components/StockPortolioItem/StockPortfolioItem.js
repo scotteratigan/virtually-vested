@@ -63,7 +63,11 @@ class StockPortfolioItem extends Component {
   //     // this.render();
   //   }
   // }
-
+  calculateImpact = () => {
+    const symbol = this.props.stock.tickerSymbol;
+    if (!this.props.stockInfo[symbol]) return '';
+    return formatCash(-this.props.stock.netShareChange * this.props.stockInfo[symbol].price);
+  }
 
   render() {
     return (
@@ -105,6 +109,9 @@ class StockPortfolioItem extends Component {
         </td>
         <td>
           <StockPortfolioCounter workingPortfolio={this.props.workingPortfolio} index={this.props.index} handleQtyChange={this.props.handleQtyChange} />
+        </td>
+        <td className='text-right'>
+          {this.calculateImpact()}
         </td>
       </tr>
     );

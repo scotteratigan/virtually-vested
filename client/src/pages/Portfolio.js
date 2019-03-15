@@ -14,7 +14,7 @@ class Portfolio extends Component {
     startCash: 0,
     email: '',
     name: '',
-    portfolioValue: 0,
+    // portfolioValue: 0,
     tradeHistory: [],
     selectedStock: null, // todo: determine data type
     workingPortfolio: [],
@@ -81,73 +81,78 @@ class Portfolio extends Component {
 
   render() {
     return (
-      <Container fluid>
-        <Jumbotron>
-          <img src={Logo} alt='Virtually Vested' />
-          {/* <h1>Stock Portfolio</h1> */}
-          <h4>{this.props.user.email}</h4>
-          <Row>
-            <Col size='sm-6 md-3 lg-2' className='text-right'>
-              Initial Investment:
+      <>
+        <Container fluid>
+          <Jumbotron>
+            <img src={Logo} alt='Virtually Vested' />
+            {/* <h1>Stock Portfolio</h1> */}
+            <h4>{this.props.user.email}</h4>
+            <Row>
+              <Col size='sm-6 md-3 lg-2' className='text-right'>
+                Initial Investment:
             </Col>
-            <Col size='sm-6 md-3 lg-2' className='text-left'>
-              {formatCash(this.props.user.startingCash)}
-            </Col>
-            <Col size='sm-12 md-6 lg-4'>
-              Portfolio Value: {formatCash(this.props.user.portfolioValue)}
-            </Col>
-            <Col size='sm-12 md-6 lg-4'>
-              Cash: {formatCash(this.props.user.cash)}
-            </Col>
-          </Row>
-          <Row>
-            <Col size='sm-12 md-6 lg-4'>
-              Current Total (portfolio + cash): {formatCash(this.props.user.startingCash)}
-            </Col>
-            <Col size='sm-12 md-6 lg-4'>
-              Total Gain/Loss:
-                </Col>
-            <Col size='sm-12 md-6 lg-4'>
-              Total Gain / Loss %:
-                </Col>
-          </Row>
-        </Jumbotron>
+              <Col size='sm-6 md-3 lg-2' className='text-left'>
+                {formatCash(this.props.user.startingCash)}
+              </Col>
+              <Col size='sm-12 md-6 lg-4'>
+                Portfolio Value: {formatCash(this.props.portfolioValue)}
+              </Col>
+              <Col size='sm-12 md-6 lg-4'>
+                Cash: {formatCash(this.props.user.cash)}
+              </Col>
+            </Row>
+            <Row>
+              <Col size='sm-12 md-6 lg-4'>
+                Current Total (portfolio + cash): {formatCash(this.props.user.cash + this.props.portfolioValue)}
+              </Col>
+              <Col size='sm-12 md-6 lg-4'>
+                {/* current total - starting cash */}
+                {/* todo: save this in state and conditionally render Total Gain or Total Loss instead of both */}
+                Total Gain/Loss: {formatCash(this.props.user.cash + this.props.portfolioValue - this.props.user.startingCash)}
+              </Col>
+              <Col size='sm-12 md-6 lg-4'>
+                {/* Net change / initial investment */}
+                Total Gain/Loss: {((this.props.user.cash + this.props.portfolioValue - this.props.user.startingCash) / this.props.user.startingCash * 100).toFixed(2)}%
+              </Col>
+            </Row>
+          </Jumbotron>
 
-        <div className='table-responsive' style={{ backgroundColor: '#5B45B9', color: 'white', width: 'auto', paddingTop: '5px' }}><h3 className='text-center'>Current Portfolio</h3></div>
-        {this.props.stockPortfolio.length ? (
-          <>
-            <table className='table table-bordered table-hover table-sm'>
-              <thead className='thead-dark'>
-                <tr>
-                  <th scope='col' className='text-center'>Symbol<br />Company Name</th>
-                  <th scope='col' className='text-right'>Qty</th>
-                  <th scope='col' className='text-right'>Current Price / Share</th>
-                  <th scope='col' className='text-right'>Current Value</th>
-                  <th scope='col' className='text-right'>Cost Basis per Share</th>
-                  <th scope='col' className='text-right'>Total Cost Basis</th>
-                  <th scope='col' className='text-right'>Total Gain/Loss</th>
-                  <th scope='col' className='text-center'>% Total Gain/Loss</th>
-                  <th scope='col' className='text-center'>Modify</th>
-                  <th scope='col'></th>
-                </tr>
-              </thead>
-              <tbody>
-                {this.state.workingPortfolio.map((stock, index) => (
-                  <StockPortfolioItem key={stock.tickerSymbol} stock={stock} index={index} stockInfo={this.props.stockInfo} rerenderStockInfo={this.props.rerenderStockInfo}
-                    workingPortfolio={this.state.workingPortfolio} handleQtyChange={this.handleQtyChange} />
-                ))}
-              </tbody>
-            </table>
-            <SearchStocks clickFunction={this.addStockToPortfolio} buttonLabel='Add Stock to Portfolio' prompt='Stock to add' />
-            <Button variant='outline-success' size='lg' block style={{ margin: '1rem' }}>Make Trade!</Button>
-          </>
-        ) : (
-            // todo: timeout at some point?
-            <h3>Loading data...</h3>
-          )}
+          <div className='table-responsive' style={{ backgroundColor: '#5B45B9', color: 'white', width: 'auto', paddingTop: '5px' }}><h3 className='text-center'>Current Portfolio</h3></div>
+          {this.props.stockPortfolio.length ? (
+            <>
+              <table className='table table-bordered table-hover table-sm'>
+                <thead className='thead-dark'>
+                  <tr>
+                    <th scope='col' className='text-center'>Symbol<br />Company Name</th>
+                    <th scope='col' className='text-right'>Qty</th>
+                    <th scope='col' className='text-right'>Current Price / Share</th>
+                    <th scope='col' className='text-right'>Current Value</th>
+                    <th scope='col' className='text-right'>Cost Basis per Share</th>
+                    <th scope='col' className='text-right'>Total Cost Basis</th>
+                    <th scope='col' className='text-right'>Total Gain/Loss</th>
+                    <th scope='col' className='text-center'>% Total Gain/Loss</th>
+                    <th scope='col' className='text-center'>Modify</th>
+                    <th scope='col' className='text-right'>Cash Impact</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {this.state.workingPortfolio.map((stock, index) => (
+                    <StockPortfolioItem key={stock.tickerSymbol} stock={stock} index={index} stockInfo={this.props.stockInfo} rerenderStockInfo={this.props.rerenderStockInfo}
+                      workingPortfolio={this.state.workingPortfolio} handleQtyChange={this.handleQtyChange} />
+                  ))}
+                </tbody>
+              </table>
+              <SearchStocks clickFunction={this.addStockToPortfolio} buttonLabel='Add Stock to Portfolio' prompt='Stock to add' />
+              <Button variant='outline-success' size='lg' block style={{ margin: '1rem' }}>Make Trade!</Button>
+            </>
+          ) : (
+              // todo: timeout at some point?
+              <h3>Loading data...</h3>
+            )}
 
+        </Container>
         <Footer />
-      </Container>
+      </>
     );
   }
 }

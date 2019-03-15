@@ -14,6 +14,7 @@ class App extends Component {
   state = {
     user: {}, // user object, contains token, name, email, cash, portfolioValue
     userLoggedIn: false,
+    portfolioValue: 0,
     transactions: [], // all buy and sell records
     stockPortfolio: [], // record of stocks currently owned
     stockInfo: {}, // current market prices
@@ -85,7 +86,9 @@ class App extends Component {
         const { data } = response;
         stockInfo[data.tickerSymbol] = { ...data };
       });
-      this.setState({ stockInfo, rerenderStockInfo: !this.state.rerenderStockInfo });
+      const portfolioValue = this.state.stockPortfolio.reduce((totalVal, stock) => totalVal + Math.abs(stock.centsTotal), 0);
+      console.log('Setting portfolio Value to:', portfolioValue);
+      this.setState({ stockInfo, rerenderStockInfo: !this.state.rerenderStockInfo, portfolioValue });
     });
   }
 
@@ -120,7 +123,8 @@ class App extends Component {
                 stockInfo={this.state.stockInfo}
                 rerenderStockInfo={this.state.rerenderStockInfo}
                 user={this.state.user}
-                getNewStockInfo={this.getNewStockInfo} />}
+                getNewStockInfo={this.getNewStockInfo}
+                portfolioValue={this.state.portfolioValue} />}
             />
             <Route exact
               path='/trades'
