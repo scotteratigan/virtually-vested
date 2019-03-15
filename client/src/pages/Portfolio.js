@@ -19,6 +19,7 @@ class Portfolio extends Component {
     selectedStock: null, // todo: determine data type
     workingPortfolio: [],
     count: 0
+    // rerenderStockInfo: this.props.rerenderStockInfo
   };
 
   deleteStock = index => {
