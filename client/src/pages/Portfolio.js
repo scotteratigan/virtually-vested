@@ -51,12 +51,22 @@ class Portfolio extends Component {
 
   handleQtyChange = (index, action) => {
     // index is position in array, doIncrement is boolean, true means add, false means subtract
+    // man, this would have been much simpler to implement with 2 vars...
     const tempPortfolio = [...this.state.workingPortfolio];
     const currStock = tempPortfolio[index];
-    if (action === '+') currStock.netShareChange += 1;
+    const selling = currStock.netShareChange < 0 || (1 / currStock.netShareChange) === -Infinity;
+    if (action === '+') {
+
+      if (selling && currStock.quantity - Math.abs(currStock.netShareChange - 1) < 0) return; // don't allow to sell more than we have
+      currStock.netShareChange = Math.abs(currStock.netShareChange) + 1;
+      if (selling) currStock.netShareChange *= -1;
+    }
     else if (action === '-') {
       // subtract, but not below zero:
-      if (Math.abs(currStock.netShareChange) > 0) currStock.netShareChange -= 1;
+      if (Math.abs(currStock.netShareChange) > 0) {
+        currStock.netShareChange = Math.abs(currStock.netShareChange) - 1;
+        if (selling) currStock.netShareChange *= -1;
+      }
     } else if (action === 'buy') {
       // buying or selling is stored in array by sign of the netShareChange, negative means sell
       currStock.netShareChange = Math.abs(currStock.netShareChange);
