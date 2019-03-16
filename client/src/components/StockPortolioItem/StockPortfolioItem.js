@@ -5,18 +5,44 @@ import StockPortfolioCounter from '../StockPortfolioCounter/StockPortfolioCounte
 import { Link } from 'react-router-dom'
 // import '../components/Counter/style.css';
 class StockPortfolioItem extends Component {
+  state = {
+    currValCents: 0,
+    ttlCostBasisCents: 0,
+    ttlValCents: 0,
+    netChange: 0,
+    pctChange: 0,
+    fmtPctChange: ''
+  }
+
+  componentDidMount = () => {
+    this.calculateStockInfo();
+  }
+
+  componentDidUpdate = prevProps => {
+    // re-render everything if the quantity owned has changed:
+    if (prevProps.stock.quantity != this.props.stock.quantity) {
+      this.calculateStockInfo();
+    }
+  }
+
+  calculateStockInfo = () => {
+    const currValCents = this.getStockPrice(this.props.stock.tickerSymbol);
+    const ttlCostBasisCents = Math.abs(this.props.stock.centsTotal);
+    const ttlValCents = currValCents * this.props.stock.quantity;
+    const netChange = ttlValCents - ttlCostBasisCents;
+    let pctChange = (((ttlValCents / ttlCostBasisCents) - 1) * 100).toFixed(2);
+    if (isNaN(pctChange)) {
+      pctChange = 0.00;
+    }
+    const fmtPctChange = pctChange < 0 ? '- %' + Math.abs(pctChange).toString() : '+ %' + pctChange.toString();
+    this.setState({ currValCents, ttlCostBasisCents, ttlValCents, netChange, pctChange, fmtPctChange });
+
+  }
 
   getStockPrice = tickerSymbol => {
     if (!this.props.stockInfo[tickerSymbol]) return '';
     return this.props.stockInfo[tickerSymbol].price;
   }
-
-  currValCents = this.getStockPrice(this.props.stock.tickerSymbol);
-  ttlCostBasisCents = Math.abs(this.props.stock.centsTotal);
-  ttlValCents = this.currValCents * this.props.stock.quantity;
-  netChange = this.ttlValCents - this.ttlCostBasisCents;
-  pctChange = (((this.ttlValCents / this.ttlCostBasisCents) - 1) * 100).toFixed(2);
-  fmtPctChange = this.pctChange < 0 ? '- %' + Math.abs(this.pctChange).toString() : '+ %' + this.pctChange.toString();
 
   calculateImpact = () => {
     const symbol = this.props.stock.tickerSymbol;
@@ -39,7 +65,6 @@ class StockPortfolioItem extends Component {
         {/* todo: make row green if positive investment, red if bad? */}
         <td>
           {/* ticker symbol: */}
-          {/* <Link to='/stockhistory'>{this.props.stock.tickerSymbol}</Link> */}
           <Link to={{
             pathname: '/stockhistory',
             state: {
@@ -58,27 +83,27 @@ class StockPortfolioItem extends Component {
         </td>
         <td className='text-right'>
           {/* current stock price: */}
-          {formatCash(this.currValCents)}
+          {formatCash(this.state.currValCents)}
         </td>
         <td className='text-right'>
           {/* current value (price * quantity owned) */}
-          {this.props.stock.quantity > 0 ? formatCash(this.ttlValCents) : 'n/a'}
+          {this.props.stock.quantity > 0 ? formatCash(this.state.ttlValCents) : 'n/a'}
         </td>
         <td className='text-right'>
           {/* cost basis (original cost per share - needs to be calculated, only total cost basis is stored in db) */}
-          {this.props.stock.quantity > 0 ? formatCash(this.ttlCostBasisCents / this.props.stock.quantity) : 'n/a'}
+          {this.props.stock.quantity > 0 ? formatCash(this.state.ttlCostBasisCents / this.props.stock.quantity) : 'n/a'}
         </td>
         <td className='text-right'>
           {/* cost basis, total */}
-          {this.props.stock.quantity > 0 ? formatCash(this.ttlCostBasisCents) : 'n/a'}
+          {this.props.stock.quantity > 0 ? formatCash(this.state.ttlCostBasisCents) : 'n/a'}
         </td>
         <td className='text-right'>
           {/* total gain/loss */}
-          {this.props.stock.quantity > 0 ? formatCash(this.netChange) : 'n/a'}
+          {this.props.stock.quantity > 0 ? formatCash(this.state.netChange) : 'n/a'}
         </td>
         <td className='text-right'>
           {/* total gain/loss */}
-          {this.props.stock.quantity > 0 ? this.fmtPctChange : 'n/a'}
+          {this.props.stock.quantity > 0 ? this.state.fmtPctChange : 'n/a'}
         </td>
         <td>
           <StockPortfolioCounter workingPortfolio={this.props.workingPortfolio} index={this.props.index} handleQtyChange={this.props.handleQtyChange} />

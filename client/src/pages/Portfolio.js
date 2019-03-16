@@ -11,15 +11,7 @@ import StockPortfolioItem from '../components/StockPortolioItem/StockPortfolioIt
 
 class Portfolio extends Component {
   state = {
-    currentCash: 0,
-    startCash: 0,
-    email: '',
-    name: '',
-    // portfolioValue: 0,
-    tradeHistory: [],
-    selectedStock: null, // todo: determine data type
     workingPortfolio: [],
-    count: 0,
     redirectToHome: false
   };
 
@@ -77,7 +69,6 @@ class Portfolio extends Component {
     const currStock = tempPortfolio[index];
     const selling = currStock.netShareChange < 0 || (1 / currStock.netShareChange) === -Infinity;
     if (action === '+') {
-
       if (selling && currStock.quantity - Math.abs(currStock.netShareChange - 1) < 0) return; // don't allow to sell more than we have
       currStock.netShareChange = Math.abs(currStock.netShareChange) + 1;
       if (selling) currStock.netShareChange *= -1;
@@ -97,7 +88,6 @@ class Portfolio extends Component {
       if (Math.abs(currStock.netShareChange) > currStock.quantity) currStock.netShareChange = -currStock.quantity;
     }
     this.setState({ workingPortfolio: tempPortfolio });
-    // todo: if we click sell but qty is greater than qty owned, change qty to qty owned
   }
 
   formatTradeData = () => {
@@ -147,7 +137,6 @@ class Portfolio extends Component {
           </Jumbotron>
 
           <div className='table-responsive' style={{ backgroundColor: '#5B45B9', color: 'white', width: 'auto', paddingTop: '5px' }}><h3 className='text-center'>Current Portfolio</h3></div>
-          {/* {this.props.stockPortfolio.length ? ( */}
           <>
             <table className='table table-bordered table-hover table-sm'>
               <thead className='thead-dark'>
@@ -174,11 +163,6 @@ class Portfolio extends Component {
             <SearchStocks clickFunction={this.addStockToPortfolio} buttonLabel='Add Stock to Portfolio' prompt='Stock to add' />
             <Button variant='outline-success' size='lg' block style={{ margin: '1rem' }} onClick={() => this.formatTradeData()}>Make Trade!</Button>
           </>
-          {/* ) : (
-              // todo: timeout at some point?
-              <h3>Loading data...</h3>
-            )} */}
-
         </Container>
         <Footer />
       </>
