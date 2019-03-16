@@ -46,6 +46,12 @@ class Portfolio extends Component {
     }
   }
 
+  componentDidUpdate = prevProps => {
+    if (prevProps.stockPortfolio.length != this.props.stockPortfolio.length) {
+      this.loadPortfolioData(); // todo: also detect small changes in quantities
+    }
+  }
+
   addStockToPortfolio = async ticker => {
     // wait to get new stock info before updating array to include new stock listing:
     await this.props.getNewStockInfo(ticker);
