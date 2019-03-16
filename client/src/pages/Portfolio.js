@@ -1,21 +1,12 @@
 import React, { Component, useState } from 'react';
 import Jumbotron from '../components/Jumbotron';
-import API from '../utils/API';
-// import { Link } from 'react-router-dom';
 import { Col, Row, Container } from '../components/Grid';
 import { formatCash } from '../utils/misc';
 import SearchStocks from '../components/SearchStock/SearchStock';
-import ActionBtns from '../components/ActionBtns';
-// import Counter from '../components/Counter';
-// import Moment from 'react-moment';
 import Button from 'react-bootstrap/Button';
 import Footer from '../components/Footer';
 import Logo from '../images/logo.png';
-import '../components/Counter/style.css';
-import update from "react-addons-update";
-
-// let allUniqueSymbols = [];
-// let currentPrices = [];
+import StockPortfolioItem from '../components/StockPortolioItem/StockPortfolioItem';
 
 class Portfolio extends Component {
   state = {
@@ -23,173 +14,152 @@ class Portfolio extends Component {
     startCash: 0,
     email: '',
     name: '',
-    portfolioValue: 0,
+    // portfolioValue: 0,
     tradeHistory: [],
     selectedStock: null, // todo: determine data type
-    currentPortfolio: [],
     workingPortfolio: [],
     count: 0
+    // rerenderStockInfo: this.props.rerenderStockInfo
   };
 
-  loadPortfolioData = () => {
-    const currentPortfolio = this.props.stockPortfolio
-    const workingPortfolio = currentPortfolio.map(element => ({netShareChange: 0 ,...element}))
-    this.setState({ currentPortfolio: currentPortfolio });
-    this.setState({ workingPortfolio: workingPortfolio })
+  deleteStock = index => {
+    if (this.state.workingPortfolio[index].quantity > 0) {
+      alert('Can\'t delete a stock you own!'); // todo: replace with modal
+      return;
+    }
+    this.state.workingPortfolio.splice(index, 1);
+    this.setState({ workingPortfolio: this.state.workingPortfolio });
   }
 
-
+  loadPortfolioData = () => {
+    // destructuring each object here to avoid mutation
+    const workingPortfolio = this.props.stockPortfolio.map(stock => { return { ...stock, netShareChange: 0 } });
+    this.setState({ workingPortfolio });
+  }
 
   componentDidMount() {
     this.loadPortfolioData();
   }
-  
 
-    handleIncrement = (index) => {
-      let tempPortfolio = [ ...this.state.workingPortfolio];
-      tempPortfolio[index].netShareChange += 1 
-      this.setState({ workingPortfolio: tempPortfolio });
-      // console.log("Increment value: " + JSON.stringify(this.state.netShareChange));
-    };
+  addStockToPortfolio = async ticker => {
+    // wait to get new stock info before updating array to include new stock listing:
+    await this.props.getNewStockInfo(ticker);
+    const updatedPortfolio = [...this.state.workingPortfolio];
+    updatedPortfolio.unshift({ centsTotal: 0, netShareChange: 0, quantity: 0, tickerSymbol: ticker }); // todo: replace with push but then render in opposite order
+    this.setState({ workingPortfolio: updatedPortfolio });
+  }
 
-    handleDecrement = (index) => {
-      let tempPortfolio = [ ...this.state.workingPortfolio];
-      tempPortfolio[index].netShareChange -= 1 
-      this.setState({ workingPortfolio: tempPortfolio });
-    };
+  handleQtyChange = (index, action) => {
+    // index is position in array, doIncrement is boolean, true means add, false means subtract
+    // man, this would have been much simpler to implement with 2 vars...
+    const tempPortfolio = [...this.state.workingPortfolio];
+    const currStock = tempPortfolio[index];
+    const selling = currStock.netShareChange < 0 || (1 / currStock.netShareChange) === -Infinity;
+    if (action === '+') {
 
-  // loadUserData = () => {
-  //   // todo: retry if db connection fails
-  //   // todo: replace with a filter search when we have other users
-  //   API.getUser()
-  //     .then(res => {
-  //       const { startCash, email, name, portfolioValue, tradeHistory } = res.data[0];
-  //       console.log(res.data[0]);
-  //       // Calculate the net of all trades:
-  //       const transactionsNet = tradeHistory.reduce((net, trade) => (net + trade.price), 0);
-  //       const currentCash = startCash + transactionsNet;
-  //       // Creates an array of all unique symbols from the trade history
-  //       const allSymbols = tradeHistory.map(trade => trade.symbol)
-  //       // console.log("All Symbols: " + allSymbols);
-  //       allUniqueSymbols = allSymbols.filter(function (item, pos, self) {
-  //         return self.indexOf(item) === pos;
-  //       });
-  //       console.log('All Unique Symbols: ' + allUniqueSymbols);
-  //       // Get sharesOwned for each symbol and push to an array
-  //       const sharesOwnedPerSymbol = [];
-  //       for (let i = 0; i < allUniqueSymbols.length; i++) {
-  //         let temp = tradeHistory.filter((trade) => trade.symbol.indexOf(allUniqueSymbols[i]) > -1);
-  //         let owned = temp.reduce((net, trade) => (net + trade.qty), 0);
-  //         sharesOwnedPerSymbol.push(owned);
-  //       }
-  //       console.log('owned: ' + sharesOwnedPerSymbol);
-  //       // Get totalCostBasis for each symbol and push to an array
-  //       const totalCostBasisPerSymbol = [];
-  //       for (let i = 0; i < allUniqueSymbols.length; i++) {
-  //         let temp = tradeHistory.filter((trade) => trade.symbol.indexOf(allUniqueSymbols[i]) > -1);
-  //         let owned = temp.reduce((net, trade) => (net + trade.price), 0);
-  //         totalCostBasisPerSymbol.push(owned);
-  //       }
-  //       console.log('Total Cost Basis: ' + totalCostBasisPerSymbol);
-  //       // todo: add currentPortfolio data to setstate    
-  //       this.setState({ currentCash, startCash, email, name, portfolioValue, tradeHistory })
-  //     }).catch(err => console.log(err));
-  // };
+      if (selling && currStock.quantity - Math.abs(currStock.netShareChange - 1) < 0) return; // don't allow to sell more than we have
+      currStock.netShareChange = Math.abs(currStock.netShareChange) + 1;
+      if (selling) currStock.netShareChange *= -1;
+    }
+    else if (action === '-') {
+      // subtract, but not below zero:
+      if (Math.abs(currStock.netShareChange) > 0) {
+        currStock.netShareChange = Math.abs(currStock.netShareChange) - 1;
+        if (selling) currStock.netShareChange *= -1;
+      }
+    } else if (action === 'buy') {
+      // buying or selling is stored in array by sign of the netShareChange, negative means sell
+      currStock.netShareChange = Math.abs(currStock.netShareChange);
+    } else if (action === 'sell') {
+      currStock.netShareChange = - Math.abs(currStock.netShareChange);
+      // if counter is higher than amount owned, reduce amount to sell to qty owned
+      if (Math.abs(currStock.netShareChange) > currStock.quantity) currStock.netShareChange = -currStock.quantity;
+    }
+    this.setState({ workingPortfolio: tempPortfolio });
+    // todo: if we click sell but qty is greater than qty owned, change qty to qty owned
+  }
 
+  formatTradeData = () => {
+    const submitData = this.state.workingPortfolio
+      .filter(stock => stock.netShareChange !== 0)
+      .map(stock => ({ symbol: stock.tickerSymbol, net: stock.netShareChange }));
+    this.props.submitTrade(submitData);
+  }
 
   render() {
     return (
-      <Container fluid>
-        <Row>
-          <Col size='md-6 sm-12'>
-            <Jumbotron>
-              <img src={Logo} alt='Virtually Vested' />
-              <h1>Stock Portfolio</h1>
-              <h3>{this.state.name}</h3>
-              <div className=""><p style={{ textDecoration: 'underline' }}>Starting Cash:</p> {formatCash(this.state.startCash)}</div>
-              <div><p style={{ textDecoration: 'underline' }}>Cash on Hand:</p> {formatCash(this.state.currentCash)}</div>
-              <div><p style={{ textDecoration: 'underline' }}>Total Gain/Loss:</p> {formatCash(this.state.currentCash - this.state.startCash)}</div>
-              <div><p style={{ textDecoration: 'underline' }}>% Total Gain/Loss:</p> {(((this.state.currentCash - this.state.startCash) / this.state.startCash) * 100).toFixed(2)}%</div>
-              {/* Rank state data goes below */}
-              <div><p style={{ textDecoration: 'underline' }}>Rank:</p> {"X"} of {"X"}</div>
-            </Jumbotron>
-            <SearchStocks selectedStock={this.state.selectedStock} />
-            <div className='table-responsive' style={{ backgroundColor: '#5B45B9', color: 'white', width: 'auto', paddingTop: '5px' }}><h3 className='text-center'>Current Portfolio</h3></div>
-            {this.props.stockPortfolio.length ? (
+      <>
+        <Container fluid>
+          <Jumbotron>
+            <img src={Logo} alt='Virtually Vested' />
+            {/* <h1>Stock Portfolio</h1> */}
+            <h4>{this.props.user.email}</h4>
+            <Row>
+              <Col size='sm-6 md-3 lg-2' className='text-right'>
+                Initial Investment:
+            </Col>
+              <Col size='sm-6 md-3 lg-2' className='text-left'>
+                {formatCash(this.props.user.startingCash)}
+              </Col>
+              <Col size='sm-12 md-6 lg-4'>
+                Portfolio Value: {formatCash(this.props.portfolioValue)}
+              </Col>
+              <Col size='sm-12 md-6 lg-4'>
+                Cash: {formatCash(this.props.user.cash)}
+              </Col>
+            </Row>
+            <Row>
+              <Col size='sm-12 md-6 lg-4'>
+                Current Total (portfolio + cash): {formatCash(this.props.user.cash + this.props.portfolioValue)}
+              </Col>
+              <Col size='sm-12 md-6 lg-4'>
+                {/* current total - starting cash */}
+                {/* todo: save this in state and conditionally render Total Gain or Total Loss instead of both */}
+                Total Gain/Loss: {formatCash(this.props.user.cash + this.props.portfolioValue - this.props.user.startingCash)}
+              </Col>
+              <Col size='sm-12 md-6 lg-4'>
+                {/* Net change / initial investment */}
+                Total Gain/Loss: {((this.props.user.cash + this.props.portfolioValue - this.props.user.startingCash) / this.props.user.startingCash * 100).toFixed(2)}%
+              </Col>
+            </Row>
+          </Jumbotron>
+
+          <div className='table-responsive' style={{ backgroundColor: '#5B45B9', color: 'white', width: 'auto', paddingTop: '5px' }}><h3 className='text-center'>Current Portfolio</h3></div>
+          {this.props.stockPortfolio.length ? (
+            <>
               <table className='table table-bordered table-hover table-sm'>
                 <thead className='thead-dark'>
                   <tr>
-                    <th scope="col" className='text-center'>Symbol
-                        {'\n'}Company Name</th>
-                    <th scope="col" className='text-center'>Qty</th>
-                    <th scope="col" className='text-right'>Current Price / Share</th>
-                    <th scope="col" className='text-right'>Current Value</th>
-                    <th scope="col" className='text-right'>Cost Basis per Share</th>
-                    <th scope="col" className='text-right'>Total Cost Basis</th>
-                    <th scope="col" className='text-right'>Total Gain/Loss</th>
-                    <th scope="col" className='text-right'>% Total Gain/Loss</th>
-                    <th scope="col" className='text-center'>Buy/Sell Action Selection & Estimated Impact</th>
+                    <th scope='col' className='text-center'>Symbol<br />Company Name</th>
+                    <th scope='col' className='text-right'>Qty</th>
+                    <th scope='col' className='text-right'>Current Price / Share</th>
+                    <th scope='col' className='text-right'>Current Value</th>
+                    <th scope='col' className='text-right'>Cost Basis per Share</th>
+                    <th scope='col' className='text-right'>Total Cost Basis</th>
+                    <th scope='col' className='text-right'>Total Gain/Loss</th>
+                    <th scope='col' className='text-center'>% Total Gain/Loss</th>
+                    <th scope='col' className='text-center'>Modify</th>
+                    <th scope='col' className='text-right'>Cash Impact</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {console.log('PORTFOLIO.JS line 143 this.props.stockPortfolio:', this.props.stockPortfolio)}
                   {this.state.workingPortfolio.map((stock, index) => (
-                    <tr key={stock.tickerSymbol} className={'list-group-item-action'} >
-                      <td style={{ display: 'block' }}>{stock.tickerSymbol}</td>
-                      {/* <td style={{ display: 'block' }}><a href={'link to company website from API call here'}>{trade.name}</a></td> */}
-                      <td>{stock.quantity}</td>
-                      <td>{'API data'}</td>
-                      <td>{'calc using API data'}</td>
-                      <td className='text-center'>{formatCash(Math.abs(stock.price))}</td>
-                      <td className='text-right'>{formatCash(Math.abs(stock.price * stock.qty))}</td>
-                      <td>{'calc using API data'}</td>
-                      <td>{'calc using API data'}</td>
-                      <td style={{ columnCount: 3 }}>
-                          <td style={{ display: 'block' }}><ActionBtns /></td>
-                          <td style={{ display: 'block' }}>
-                          <div className="card text-center">
-
-                          {/* Counter Div */}
-                          <div className='counter' count={stock.netShareChange} name={stock.tickerSymbol} 
-                          handleIncrement={this.handleIncrement}
-                          handleDecrement={this.handleDecrement}>
-
-                          {/* Decrement button */}
-                          <button className='btn-outline-danger btn-sm' onClick={()=>this.handleDecrement(index)}>
-                          -
-                          </button>
-
-                          {/* Score display */}
-                            <div className="counter-score" style={{display: 'inline-block', overflow: 'hidden' }}>{stock.netShareChange}</div>
-                            
-                              {/* Increment button */}
-                          <button className='btn-outline-success btn-sm' onClick={()=>this.handleIncrement(index)}>
-                          +
-                          </button>
-                          </div>
-                        </div>
-                          </td>
-                          <td style={{ fontSize: '.75rem', display: 'block' }}>Est. Total Gain/Loss: {'calc using API data'}</td>
-                          <td style={{ fontSize: '.75rem', display: 'block' }}>Est. New Cash on Hand: {'calc using API data'}</td>
-                          <td style={{ fontSize: '.75rem', display: 'block' }}>Est. New Portfolio Value: {'calc using API data'}</td>
-                          <td style={{ fontSize: '.75rem', display: 'block' }}>Est. New Portfolio % Gain/Loss: {'calc using API data'}</td>
-                      </td>
-
-
-                      {/* <td className='text-right'><Moment format='MM-DD-YYYY HH:mm a'>{trade.date}</Moment></td> */}
-                    </tr>
-
+                    <StockPortfolioItem key={stock.tickerSymbol} stock={stock} index={index} stockInfo={this.props.stockInfo} rerenderStockInfo={this.props.rerenderStockInfo}
+                      workingPortfolio={this.state.workingPortfolio} handleQtyChange={this.handleQtyChange} />
                   ))}
                 </tbody>
               </table>
-            ) : (
-                <h3>Loading data...</h3>
-              )}
-            <Button variant='outline-success' size='lg' block style={{ margin: '1rem' }}>Make Trade!</Button>
-          </Col>
-        </Row>
+              <SearchStocks clickFunction={this.addStockToPortfolio} buttonLabel='Add Stock to Portfolio' prompt='Stock to add' />
+              <Button variant='outline-success' size='lg' block style={{ margin: '1rem' }} onClick={() => this.formatTradeData()}>Make Trade!</Button>
+            </>
+          ) : (
+              // todo: timeout at some point?
+              <h3>Loading data...</h3>
+            )}
+
+        </Container>
         <Footer />
-      </Container>
+      </>
     );
   }
 }

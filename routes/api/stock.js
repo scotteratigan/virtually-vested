@@ -9,7 +9,24 @@ const IEXAPIS_API_KEY = process.env.IEXAPIS_API_KEY;
 // global to hold search queries:
 const cachedSymbolQueries = {};
 // todo: add limit on number of cached queries
-let cachedStockQuotes = {};
+// global to hold stock info (prices, company names):
+const cachedStockQuotes = {};
+// console.log('TODO: REMOVE HARD-CODING OF STOCK VALUES!')
+// temporarily hard coding these values so I don't get throttled anymore:
+// const cachedStockQuotes = {
+//   TSLA: {
+//     companyName: "Tesla, Inc.",
+//     price: 27543,
+//     tickerSymbol: "TSLA",
+//     updateTime: Date.now()
+//   },
+//   AAPL: {
+//     companyName: "Apple, Inc.",
+//     price: 18612,
+//     tickerSymbol: "AAPL",
+//     updateTime: Date.now()
+//   }
+// }
 
 // Matches with '/api/stock/return_symbols/t' where t is the user input
 // This is the search route to look up stock symbols
@@ -51,7 +68,7 @@ router.route('/quote/:symbol')
     const stock = cachedStockQuotes[stockSymbol];
     const currTime = Date.now(); // remember, this is in ms
     const elapsedTime = currTime - stock.updateTime;
-    if (elapsedTime < 120000 && stock.price) { // if less than two minutes has passed, send the cached result
+    if (elapsedTime < 120000 && stock.price && stock.price > 0) { // if less than two minutes has passed, send the cached result
       stock.cachedValueSent = true;
       res.send(stock);
       return;
@@ -121,4 +138,4 @@ function fixKeyNames(obj) {
   return newObj;
 }
 
-module.exports = router;
+module.exports = { router, cachedStockQuotes };

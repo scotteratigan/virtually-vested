@@ -14,16 +14,18 @@ class App extends Component {
   state = {
     user: {}, // user object, contains token, name, email, cash, portfolioValue
     userLoggedIn: false,
+    portfolioValue: 0,
     transactions: [], // all buy and sell records
     stockPortfolio: [], // record of stocks currently owned
-    stockInfo: {} // current market prices
+    stockInfo: {}, // current market prices
+    rerenderStockInfo: false // a bool switch to trigger re-render of components using stock prices/info
   }
   // todo: add /tos and /privacy routes (required by Twitter login API)
 
-  logUserIn = token => {
-    this.setState({ userLoggedIn: true, user: { token } }, () => {
+  logUserIn = (token, email) => {
+    this.setState({ userLoggedIn: true, user: { token, email } }, () => {
       console.log('Calling loadUserData with token:', this.state.user.token);
-      this.loadUserData(this.state.user.token);
+      this.loadUserData(this.state.user);
       this.loadUserTransactions(this.state.user.token);
     });
   }
@@ -35,11 +37,12 @@ class App extends Component {
       transactions: [],
       stockPortfolio: []
       // note: don't wipe out stock info/prices
+      // todo: delete local token
     });
   }
 
-  loadUserData = token => {
-    API.getUser(token).then(res => {
+  loadUserData = user => {
+    API.getUser(user).then(res => {
       console.log('App.js loadUserData: data is loaded:', res.data);
       this.setState({ user: { ...res.data } });
     });
@@ -64,33 +67,47 @@ class App extends Component {
         return transactions;
       }, {}
     );
-    console.log('Portfolio is:', portfolioObj);
     // now convert this object to an array:
     let stockPortfolio = [];
     for (let stock in portfolioObj) {
-      console.log('Stock loop, stock is:', stock);
       stockPortfolio.push({ tickerSymbol: stock, quantity: portfolioObj[stock].quantity, centsTotal: portfolioObj[stock].centsTotal });
     }
     stockPortfolio = stockPortfolio.filter(stock => stock.quantity > 0); // filter out negative or zero stocks
-    console.log('Portfolio array is:', stockPortfolio);
     this.setState({ stockPortfolio }, this.getAllStockInfo);
   }
 
   getAllStockInfo = () => {
-    console.log('Ready to grab prices...');
     const stockInfoPromises = this.state.stockPortfolio.map(async stock => {
       return API.getCurrentPrice(stock.tickerSymbol);
     });
     const stockInfo = {};
     Promise.all(stockInfoPromises).then(responses => {
       responses.forEach(response => {
-        console.log('App.js response:', response);
         const { data } = response;
-        // console.log()
         stockInfo[data.tickerSymbol] = { ...data };
       });
-      this.setState({ stockInfo })
+      const portfolioValue = this.state.stockPortfolio.reduce((totalVal, stock) => totalVal + Math.abs(stock.centsTotal), 0);
+      console.log('Setting portfolio Value to:', portfolioValue);
+      this.setState({ stockInfo, rerenderStockInfo: !this.state.rerenderStockInfo, portfolioValue });
     });
+  }
+
+  getNewStockInfo = tickerSymbol => {
+    return new Promise((resolve, reject) => {
+      API.getCurrentPrice(tickerSymbol).then(res => {
+        const stockInfoToAdd = res.data;
+        const updatedStockInfo = { ...this.state.stockInfo };
+        updatedStockInfo[tickerSymbol] = stockInfoToAdd;
+        this.setState({ stockInfo: updatedStockInfo }, () => {
+          return resolve();
+        })
+      });
+    });
+  }
+
+  submitTrade = transData => {
+    console.log('App.js submitTrade firing:', JSON.stringify(transData));
+    API.makeTrade({ trades: transData, token: this.state.user.token });
   }
 
   render() {
@@ -109,13 +126,18 @@ class App extends Component {
               render={(props) => <Portfolio {...props}
                 stockPortfolio={this.state.stockPortfolio}
                 stockInfo={this.state.stockInfo}
-                user={this.state.user} />}
+                rerenderStockInfo={this.state.rerenderStockInfo}
+                user={this.state.user}
+                getNewStockInfo={this.getNewStockInfo}
+                portfolioValue={this.state.portfolioValue}
+                submitTrade={this.submitTrade} />}
             />
             <Route exact
               path='/trades'
               render={(props) => <TradeHistory {...props}
                 transactions={this.state.transactions}
                 stockInfo={this.state.stockInfo}
+                rerenderStockInfo={this.state.rerenderStockInfo}
                 user={this.state.user} />}
             />
             <Route exact path='/stockhistory' component={StockHistory} />

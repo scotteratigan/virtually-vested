@@ -4,7 +4,7 @@ const userRoutes = require('./user');
 const transactionRoutes = require('./transaction');
 
 // Routes
-router.use('/stock', stockRoutes);
+router.use('/stock', stockRoutes.router);
 router.use('/user', userRoutes);
 router.use('/transactions', transactionRoutes);
 

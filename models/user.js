@@ -9,7 +9,8 @@ const userSchema = new Schema({
   date: { type: Date, default: Date.now, required: true },
   // note: all transactions are in pennies, then divided by 100 to display as dollars
   portfolioValue: { type: Number, default: 0, required: true },
-  cash: { type: Number, default: 10000000, required: true }
+  cash: { type: Number, default: 10000000, required: true },
+  startingCash: { type: Number, default: 10000000, required: true }
 });
 
 // userSchema.plugin(findOrCreate);

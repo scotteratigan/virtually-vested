@@ -20,7 +20,8 @@ module.exports = {
   findByToken: function (req, res) {
     console.log('FIND BY TOKEN IS HITTING.')
     console.log(CircularJSON.stringify(req.params));
-    const { token } = req.params;
+    const { token, email } = req.params;
+    console.log(`performing findOne({token: "${token}"}) `)
     db.User.findOne({ 'token': token })
       .then(dbRes => {
         console.log('in db.User.findOne.then routine...');
@@ -31,7 +32,7 @@ module.exports = {
           console.log('Creating new user');
           // res.send('CREATE NEW USER');
           // create(res, res, token);
-          db.User.create({ token }).then(dbRes => res.json(dbRes))
+          db.User.create({ token, email }).then(dbRes => res.json(dbRes))
             .catch(err => {
               console.error('Error creating new user:', err);
               res.status(422).json(err);

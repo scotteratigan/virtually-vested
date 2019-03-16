@@ -2,28 +2,26 @@
 import axios from 'axios';
 
 export default {
-  getUser: function (token) {
-    console.log('API.js getUser: token:', token);
-    return axios.get(`/api/user/${token}`);
+  getUser: function (user) {
+    console.log('API.js getUser: user:', user);
+    return axios.get(`/api/user/token-${user.token}&email-${user.email}`);
   },
   getTrades: function (token) {
     // todo: ensure user is authorized
     return axios.get(`/api/transactions/${token}`);
   },
   getCurrentPrice: function (symbol) {
-    if (!symbol) return {};
+    if (!symbol) {
+      console.error('Error getting current stock price.');
+      return Promise.reject({});
+    }
     return axios.get(`/api/stock/quote/${symbol}`);
   },
   stockDailyHistory: function (symbol) {
     return axios.get(`/api/stock/daily/${symbol}`);
   },
-  logUserIn: function (userToken) {
-    console.log('API.logUserIn: should be calling a POST to /api/user/login');
-    console.log('passing in token:', userToken);
-    try {
-      return axios.post(`/api/user/login?user=${userToken}`);
-    } catch (err) {
-      console.err('API.js POST error:', err);
-    }
+  makeTrade: function (tradeData) {
+    console.log('inside API.js, calling axios.post with data:', JSON.stringify(tradeData));
+    return axios.post('/api/transactions/', tradeData);
   }
 };

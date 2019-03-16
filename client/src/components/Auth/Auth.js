@@ -9,7 +9,7 @@ export default class Auth {
     redirectUri: 'http://localhost:3000/loggedin',
     response_mode: 'query',
     responseType: 'token id_token',
-    scope: 'openid'
+    scope: 'openid email'
   });
 
   login() {
