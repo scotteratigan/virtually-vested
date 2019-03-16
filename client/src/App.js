@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import Nav from './components/Nav/Nav';
 import StockHistory from './components/StockHistory/StockHistory';
 import Index from './pages/Index';
@@ -18,12 +18,14 @@ class App extends Component {
     transactions: [], // all buy and sell records
     stockPortfolio: [], // record of stocks currently owned
     stockInfo: {}, // current market prices
-    rerenderStockInfo: false // a bool switch to trigger re-render of components using stock prices/info
+    // todo: remove rerenderStockInfo? I don't think it is necessary anymore
+    rerenderStockInfo: false, // a bool switch to trigger re-render of components using stock prices/info
+    redirectToHome: false
   }
   // todo: add /tos and /privacy routes (required by Twitter login API)
 
   logUserIn = (token, email) => {
-    this.setState({ userLoggedIn: true, user: { token, email } }, () => {
+    this.setState({ userLoggedIn: true, user: { token, email }, redirectToHome: false }, () => {
       console.log('Calling loadUserData with token:', this.state.user.token);
       this.loadUserData(this.state.user);
       this.loadUserTransactions(this.state.user.token);
@@ -38,6 +40,11 @@ class App extends Component {
       stockPortfolio: []
       // note: don't wipe out stock info/prices
       // todo: delete local token
+    }, () => {
+      // now delete the cookie:
+      localStorage.removeItem('isLoggedIn');
+      // then re-route to landing page:
+      this.setState({ redirectToHome: true });
     });
   }
 
@@ -105,15 +112,18 @@ class App extends Component {
     });
   }
 
-  submitTrade = transData => {
+  submitTrade = async (transData) => {
     console.log('App.js submitTrade firing:', JSON.stringify(transData));
-    API.makeTrade({ trades: transData, token: this.state.user.token });
+    await API.makeTrade({ trades: transData, token: this.state.user.token });
+    this.loadUserTransactions();
   }
 
   render() {
+    // console.log('window.location.pathname:', window.location.pathname);
     return (
       <Router>
         <>
+          {this.state.redirectToHome && window.location.pathname !== '/' ? <Redirect to='/' /> : null}
           {/* Pass login info to Nav to pass into login component */}
           {/* <Nav userLoggedIn={this.state.userLoggedIn} userToken={this.state.userToken} logUserIn={this.logUserIn} /> */}
           <Nav userLoggedIn={this.state.userLoggedIn} user={this.state.user} logUserOut={this.logUserOut} />
@@ -128,6 +138,7 @@ class App extends Component {
                 stockInfo={this.state.stockInfo}
                 rerenderStockInfo={this.state.rerenderStockInfo}
                 user={this.state.user}
+                userLoggedIn={this.state.userLoggedIn}
                 getNewStockInfo={this.getNewStockInfo}
                 portfolioValue={this.state.portfolioValue}
                 submitTrade={this.submitTrade} />}

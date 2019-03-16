@@ -1,4 +1,5 @@
-import React, { Component, useState } from 'react';
+import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
 import Jumbotron from '../components/Jumbotron';
 import { Col, Row, Container } from '../components/Grid';
 import { formatCash } from '../utils/misc';
@@ -18,7 +19,8 @@ class Portfolio extends Component {
     tradeHistory: [],
     selectedStock: null, // todo: determine data type
     workingPortfolio: [],
-    count: 0
+    count: 0,
+    redirectToHome: false
     // rerenderStockInfo: this.props.rerenderStockInfo
   };
 
@@ -38,7 +40,11 @@ class Portfolio extends Component {
   }
 
   componentDidMount() {
-    this.loadPortfolioData();
+    if (!this.props.userLoggedIn) {
+      this.setState({ redirectToHome: true })
+    } else {
+      this.loadPortfolioData();
+    }
   }
 
   addStockToPortfolio = async ticker => {
@@ -89,6 +95,7 @@ class Portfolio extends Component {
   render() {
     return (
       <>
+        {this.state.redirectToHome ? <Redirect to='/' /> : null}
         <Container fluid>
           <Jumbotron>
             <img src={Logo} alt='Virtually Vested' />
@@ -125,37 +132,37 @@ class Portfolio extends Component {
           </Jumbotron>
 
           <div className='table-responsive' style={{ backgroundColor: '#5B45B9', color: 'white', width: 'auto', paddingTop: '5px' }}><h3 className='text-center'>Current Portfolio</h3></div>
-          {this.props.stockPortfolio.length ? (
-            <>
-              <table className='table table-bordered table-hover table-sm'>
-                <thead className='thead-dark'>
-                  <tr>
-                    <th scope='col' className='text-center'>Symbol<br />Company Name</th>
-                    <th scope='col' className='text-right'>Qty</th>
-                    <th scope='col' className='text-right'>Current Price / Share</th>
-                    <th scope='col' className='text-right'>Current Value</th>
-                    <th scope='col' className='text-right'>Cost Basis per Share</th>
-                    <th scope='col' className='text-right'>Total Cost Basis</th>
-                    <th scope='col' className='text-right'>Total Gain/Loss</th>
-                    <th scope='col' className='text-center'>% Total Gain/Loss</th>
-                    <th scope='col' className='text-center'>Modify</th>
-                    <th scope='col' className='text-right'>Cash Impact</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {this.state.workingPortfolio.map((stock, index) => (
-                    <StockPortfolioItem key={stock.tickerSymbol} stock={stock} index={index} stockInfo={this.props.stockInfo} rerenderStockInfo={this.props.rerenderStockInfo}
-                      workingPortfolio={this.state.workingPortfolio} handleQtyChange={this.handleQtyChange} />
-                  ))}
-                </tbody>
-              </table>
-              <SearchStocks clickFunction={this.addStockToPortfolio} buttonLabel='Add Stock to Portfolio' prompt='Stock to add' />
-              <Button variant='outline-success' size='lg' block style={{ margin: '1rem' }} onClick={() => this.formatTradeData()}>Make Trade!</Button>
-            </>
-          ) : (
+          {/* {this.props.stockPortfolio.length ? ( */}
+          <>
+            <table className='table table-bordered table-hover table-sm'>
+              <thead className='thead-dark'>
+                <tr>
+                  <th scope='col' className='text-center'>Symbol<br />Company Name</th>
+                  <th scope='col' className='text-right'>Qty</th>
+                  <th scope='col' className='text-right'>Current Price / Share</th>
+                  <th scope='col' className='text-right'>Current Value</th>
+                  <th scope='col' className='text-right'>Cost Basis per Share</th>
+                  <th scope='col' className='text-right'>Total Cost Basis</th>
+                  <th scope='col' className='text-right'>Total Gain/Loss</th>
+                  <th scope='col' className='text-center'>% Total Gain/Loss</th>
+                  <th scope='col' className='text-center'>Modify</th>
+                  <th scope='col' className='text-right'>Cash Impact</th>
+                </tr>
+              </thead>
+              <tbody>
+                {this.state.workingPortfolio.map((stock, index) => (
+                  <StockPortfolioItem key={stock.tickerSymbol} stock={stock} index={index} stockInfo={this.props.stockInfo} rerenderStockInfo={this.props.rerenderStockInfo}
+                    workingPortfolio={this.state.workingPortfolio} handleQtyChange={this.handleQtyChange} />
+                ))}
+              </tbody>
+            </table>
+            <SearchStocks clickFunction={this.addStockToPortfolio} buttonLabel='Add Stock to Portfolio' prompt='Stock to add' />
+            <Button variant='outline-success' size='lg' block style={{ margin: '1rem' }} onClick={() => this.formatTradeData()}>Make Trade!</Button>
+          </>
+          {/* ) : (
               // todo: timeout at some point?
               <h3>Loading data...</h3>
-            )}
+            )} */}
 
         </Container>
         <Footer />

@@ -8,7 +8,7 @@ import SearchStocks from '../SearchStock/SearchStock';
 
 class DailyHistory extends PureComponent {
   state = {
-    symbol: this.props.location.state.tickerSymbol || 'MSFT',
+    symbol: this.props.location.state && this.props.location.state.tickerSymbol ? this.props.location.state.tickerSymbol : 'MSFT',
     series: []
   }
   componentDidMount = () => {

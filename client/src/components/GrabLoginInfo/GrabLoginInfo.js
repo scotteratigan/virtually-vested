@@ -1,10 +1,11 @@
-import React, { Component } from "react";
+/* eslint-disable react/prop-types */
+/* eslint-disable no-console */
+import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
 import jwt_decode from 'jwt-decode';
 
 class Detail extends Component {
-  state = {
-    book: {}
-  };
+  state = { redirect: false, timeout: null }
 
   componentDidMount() {
     // todo: handle authentication of token, and expiration of token
@@ -18,13 +19,17 @@ class Detail extends Component {
     this.props.logUserIn(userToken, userEmail);
     // console.log('about to call API.logUserIn from GrabLoginInfo');
     // API.logUserIn(userToken); // note: no need to set state here, this is done in App.js
+    console.log('this.state.redirect:', this.state.redirect);
+    setTimeout(() => {
+      // redirect to logged in after 2 seconds
+      // todo: replace with better method?
+      this.setState({ redirect: true });
+    }, 2000);
   }
 
-  render() {
+  render = () => {
     return (
-      <div>
-        We're grabbing the login info.
-      </div>
+      <h1 className='text-center'>{this.state.redirect ? <Redirect to='/portfolio' /> : <>Loading account details...</>}</h1>
     );
   }
 }
