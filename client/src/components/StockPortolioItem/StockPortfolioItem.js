@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import { formatCash } from '../../utils/misc';
 import StockPortfolioCounter from '../StockPortfolioCounter/StockPortfolioCounter';
+import { Link } from 'react-router-dom'
 // import '../components/Counter/style.css';
 class StockPortfolioItem extends Component {
 
@@ -26,10 +27,10 @@ class StockPortfolioItem extends Component {
   getLink = () => {
     if (!this.props.stockInfo[this.props.stock.tickerSymbol]) {
       // if we don't have the company name, search by ticker symbol
-      return `https://news.google.com/search?q=${this.props.stock.tickerSymbol}`;
+      return this.props.stock.tickerSymbol;
     }
     // otherwise, search by company name
-    return `https://news.google.com/search?q=${this.props.stockInfo[this.props.stock.tickerSymbol].companyName}`;
+    return this.props.stockInfo[this.props.stock.tickerSymbol].companyName;
   }
 
   render() {
@@ -38,10 +39,18 @@ class StockPortfolioItem extends Component {
         {/* todo: make row green if positive investment, red if bad? */}
         <td>
           {/* ticker symbol: */}
-          {this.props.stock.tickerSymbol} <br />
+          {/* <Link to='/stockhistory'>{this.props.stock.tickerSymbol}</Link> */}
+          <Link to={{
+            pathname: '/stockhistory',
+            state: {
+              tickerSymbol: this.props.stock.tickerSymbol
+            }
+          }}>{this.props.stock.tickerSymbol}</Link>
+
+          <br />
           {/* link to company news: */}
           {/*  */}
-          <a href={this.getLink()} target='blank'>News</a>
+          <a href={`https://news.google.com/search?q=${this.getLink()}`} target='blank'>{this.getLink() + ' News'}</a>
         </td>
         <td className='text-right'>
           {/* quantity: */}
