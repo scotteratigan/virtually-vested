@@ -1,5 +1,7 @@
 /* eslint-disable no-console */
 const db = require('../models');
+const stockRoutes = require('../routes/api/stock');
+const { cachedStockQuotes } = stockRoutes;
 const CircularJSON = require('circular-json');
 
 // Defining methods for the userController
@@ -21,30 +23,68 @@ module.exports = {
     // const tradeIsValid = true;
     let userPortfolio = {};
     console.log('transaction controller, received request:', tradesArr, submitToken);
-    // userController.findByToken(submitToken).then(data => {
-    //   console.log('transactionController.js attemptTrade received:', data);
-    // });
-    const currCash = await db.User.findOne({ 'token': submitToken }).then(dbRes => dbRes.cash); // returns the user's cash
+    const currCashCents = await db.User.findOne({ 'token': submitToken }).then(dbRes => dbRes.cash); // returns the user's cash
     const tradeHistory = await db.Transactions.find({ 'token': submitToken }).then(dbRes => dbRes);
-    console.log('Cash is:', currCash);
+    console.log('Cash is:', currCashCents);
     console.log('Trade history is:', tradeHistory);
     tradeHistory.forEach(trade => {
       if (!userPortfolio[trade.tickerSymbol]) userPortfolio[trade.tickerSymbol] = 0;
       userPortfolio[trade.tickerSymbol] += trade.quantity;
     });
     console.log('userPortfolio:', userPortfolio);
+
+    // 2. if user tries to sell a stock they don't own, trade invalid
     // ensure we have enough qty to sell a stock:
     tradesArr.forEach(trade => {
       if (trade.qty > userPortfolio[trade.tickerSymbol]) {
         console.error('User attempted to sell more stock than currently owned!');
         return res.status(422).json('Trade invalid - can\'t sell more stock than you own.');
       }
-    })
+    });
+
+    // 3. if user tries to spend more money than they have, trade invalid
+    console.log('stock quotes:', cachedStockQuotes);
+    // note: totalTradeCostCents is positive when we're spending and negative when we're earning for selling
+    const totalTradeCostCents = tradesArr.reduce((totalCost, trade) => {
+      console.log('Analzing trade cost, trade is:', trade);
+      const cost = trade.net * cachedStockQuotes[trade.symbol].price;
+      return totalCost + cost;
+    }, 0);
+    console.log('totalTradeCostCents:', totalTradeCostCents);
+    if (totalTradeCostCents > currCashCents) {
+      console.error('User attempted to purchase stock they can\'t afford!');
+      return res.status(422).json('Trade invalid - insufficient funds.');
+    }
+
+    // otherwise, proceed with trade:
+    // todo: add error handling
+    await tradesArr.forEach(async (trade) => {
+      const centsTotal = trade.net * cachedStockQuotes[trade.symbol].price;
+      console.log('Buying', trade);
+      await db.Transactions.create({
+        'token': submitToken,
+        'tickerSymbol': trade.symbol,
+        'quantity': trade.net,
+        'centsTotal': centsTotal
+      }).then(dbRes => dbRes);
+      console.log('Stock purchased.');
+    });
+
+    db.User.update(
+      { cash: currCashCents - totalTradeCostCents },
+      { where: { 'token': submitToken } }
+    )
+      .then(result => {
+        console.log('User cash updated successfully.');
+        return res.send('SUCCESS!!!');
+      })
+      .catch(err => {
+        console.error('Error updating user cash.');
+        return res.status(422).json('Error updating cash.');
+      });
 
 
-    // if user tries to sell a stock they don't own, trade invalid
-    // if user tries to spend more money than they have, trade invalid
-    // otherwise, proceed with trade
-    res.send('RESPONSE');
+    console.log('ERROR, should not get here');
+    // res.send('ERROR, should not get here.');
   }
 };

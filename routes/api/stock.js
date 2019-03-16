@@ -9,6 +9,7 @@ const IEXAPIS_API_KEY = process.env.IEXAPIS_API_KEY;
 // global to hold search queries:
 const cachedSymbolQueries = {};
 // todo: add limit on number of cached queries
+// global to hold stock info (prices, company names):
 let cachedStockQuotes = {};
 
 // Matches with '/api/stock/return_symbols/t' where t is the user input
@@ -121,4 +122,4 @@ function fixKeyNames(obj) {
   return newObj;
 }
 
-module.exports = router;
+module.exports = { router, cachedStockQuotes };
