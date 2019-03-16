@@ -20,7 +20,7 @@ class StockPortfolioItem extends Component {
 
   componentDidUpdate = prevProps => {
     // re-render everything if the quantity owned has changed:
-    if (prevProps.stock.quantity != this.props.stock.quantity) {
+    if (prevProps.stock.quantity !== this.props.stock.quantity) {
       this.calculateStockInfo();
     }
   }

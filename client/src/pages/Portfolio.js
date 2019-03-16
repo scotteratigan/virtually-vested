@@ -40,7 +40,7 @@ class Portfolio extends Component {
 
   componentDidUpdate = prevProps => {
     // re-render if list of stocks is a different length:
-    if (prevProps.stockPortfolio.length != this.props.stockPortfolio.length) {
+    if (prevProps.stockPortfolio.length !== this.props.stockPortfolio.length) {
       this.loadPortfolioData(); // todo: also detect small changes in quantities
       return;
     }

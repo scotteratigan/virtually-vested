@@ -20,6 +20,7 @@ class App extends Component {
     stockInfo: {}, // object storing all current market prices and company names
     redirectToHome: false // bool used to redirect to home if user not logged in
   }
+
   // todo: add /tos and /privacy routes (required by Twitter login API)
 
   logUserIn = (token, email) => {
@@ -41,8 +42,14 @@ class App extends Component {
     }, () => {
       // now delete the cookie:
       localStorage.removeItem('isLoggedIn');
+      document.cookie.split(';').forEach(item => {
+        // console.log('cookie item is:', item);
+        document.cookie = item + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/';
+      });
+
       // then re-route to landing page:
-      this.setState({ redirectToHome: true });
+      setTimeout(() => { this.setState({ redirectToHome: true }) }, 2000)
+      // this.setState({ redirectToHome: true });
     });
   }
 
