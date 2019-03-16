@@ -21,7 +21,6 @@ class Portfolio extends Component {
     workingPortfolio: [],
     count: 0,
     redirectToHome: false
-    // rerenderStockInfo: this.props.rerenderStockInfo
   };
 
   deleteStock = index => {
@@ -151,7 +150,7 @@ class Portfolio extends Component {
               </thead>
               <tbody>
                 {this.state.workingPortfolio.map((stock, index) => (
-                  <StockPortfolioItem key={stock.tickerSymbol} stock={stock} index={index} stockInfo={this.props.stockInfo} rerenderStockInfo={this.props.rerenderStockInfo}
+                  <StockPortfolioItem key={stock.tickerSymbol} stock={stock} index={index} stockInfo={this.props.stockInfo}
                     workingPortfolio={this.state.workingPortfolio} handleQtyChange={this.handleQtyChange} />
                 ))}
               </tbody>

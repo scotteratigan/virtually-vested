@@ -18,8 +18,6 @@ class App extends Component {
     transactions: [], // all buy and sell records
     stockPortfolio: [], // record of stocks currently owned
     stockInfo: {}, // current market prices
-    // todo: remove rerenderStockInfo? I don't think it is necessary anymore
-    rerenderStockInfo: false, // a bool switch to trigger re-render of components using stock prices/info
     redirectToHome: false
   }
   // todo: add /tos and /privacy routes (required by Twitter login API)
@@ -95,7 +93,7 @@ class App extends Component {
       });
       const portfolioValue = this.state.stockPortfolio.reduce((totalVal, stock) => totalVal + Math.abs(stock.centsTotal), 0);
       console.log('Setting portfolio Value to:', portfolioValue);
-      this.setState({ stockInfo, rerenderStockInfo: !this.state.rerenderStockInfo, portfolioValue });
+      this.setState({ stockInfo, portfolioValue });
     });
   }
 
@@ -119,7 +117,7 @@ class App extends Component {
     if (response.status === 200) {
       alert('Trade was successful!');
       const { token, email } = this.state.user;
-      this.state.logUserIn(token, email);
+      this.logUserIn(token, email);
     }
     else {
       alert('Trade failed - ' + JSON.stringify(response.data));
@@ -143,7 +141,6 @@ class App extends Component {
               render={(props) => <Portfolio {...props}
                 stockPortfolio={this.state.stockPortfolio}
                 stockInfo={this.state.stockInfo}
-                rerenderStockInfo={this.state.rerenderStockInfo}
                 user={this.state.user}
                 userLoggedIn={this.state.userLoggedIn}
                 getNewStockInfo={this.getNewStockInfo}
@@ -155,7 +152,6 @@ class App extends Component {
               render={(props) => <TradeHistory {...props}
                 transactions={this.state.transactions}
                 stockInfo={this.state.stockInfo}
-                rerenderStockInfo={this.state.rerenderStockInfo}
                 user={this.state.user} />}
             />
             <Route exact path='/stockhistory' component={StockHistory} />
