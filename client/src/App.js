@@ -127,7 +127,6 @@ class App extends Component {
   }
 
   render() {
-    // console.log('window.location.pathname:', window.location.pathname);
     return (
       <Router>
         <>
