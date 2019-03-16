@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import Jumbotron from '../components/Jumbotron';
 import { Container } from '../components/Grid';
 import { formatCash } from '../utils/misc';
+import Moment from 'moment';
 
 // todo: convert back to stateless function?
 class TradeHistory extends Component {
@@ -16,6 +17,11 @@ class TradeHistory extends Component {
       return this.stockPrice(trade) - Math.abs(trade.centsTotal / trade.quantity);
     }
     return '';
+  }
+
+  formatTime = timeStr => {
+    let newTime = Moment(timeStr);
+    return newTime.toString();
   }
 
   render() {
@@ -33,9 +39,9 @@ class TradeHistory extends Component {
                 <th scope='col' className='text-right'>Qty</th>
                 <th scope='col' className='text-right'>Cost Basis</th>
                 <th scope='col' className='text-right'>Transaction Time</th>
-                <th scope='col' className='text-right'>Current Value</th>
+                {/* <th scope='col' className='text-right'>Current Value</th>
                 <th scope='col' className='text-right'>Net per Share</th>
-                <th scope='col' className='text-right'>Net Total</th>
+                <th scope='col' className='text-right'>Net Total</th> */}
               </tr>
             </thead>
             <tbody>
@@ -46,10 +52,10 @@ class TradeHistory extends Component {
                   <td className='text-right'>{Math.abs(trade.quantity)}</td>
                   <td className='text-right'>{formatCash(Math.abs(trade.centsTotal / trade.quantity))}</td>
                   {/* todo: format date nicer */}
-                  <td className='text-right'>{trade.date}</td>
-                  <td className='text-right'>{formatCash(this.stockPrice(trade))}</td>
+                  <td className='text-right'>{this.formatTime(trade.date)}</td>
+                  {/* <td className='text-right'>{formatCash(this.stockPrice(trade))}</td>
                   <td className='text-right'>{formatCash(this.netChange(trade))}</td>
-                  <td className='text-right'>{formatCash(this.netChange(trade) * Math.abs(trade.quantity))}</td>
+                  <td className='text-right'>{formatCash(this.netChange(trade) * Math.abs(trade.quantity))}</td> */}
                 </tr>
 
               ))}
