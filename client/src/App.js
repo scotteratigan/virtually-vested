@@ -114,8 +114,16 @@ class App extends Component {
 
   submitTrade = async (transData) => {
     console.log('App.js submitTrade firing:', JSON.stringify(transData));
-    await API.makeTrade({ trades: transData, token: this.state.user.token });
-    this.loadUserTransactions();
+    const response = await API.makeTrade({ trades: transData, token: this.state.user.token });
+    // alert('response is:' + JSON.stringify(response));
+    if (response.status === 200) {
+      alert('Trade was successful!');
+      const { token, email } = this.state.user;
+      this.state.logUserIn(token, email);
+    }
+    else {
+      alert('Trade failed - ' + JSON.stringify(response.data));
+    }
   }
 
   render() {
