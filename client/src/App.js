@@ -12,13 +12,13 @@ import API from './utils/API';
 
 class App extends Component {
   state = {
-    user: {}, // user object, contains token, name, email, cash, portfolioValue
+    user: {}, // user object, contains token, name, email, cash
     userLoggedIn: false,
-    portfolioValue: 0,
+    portfolioValue: 0, // passed to portfolio page for display
     transactions: [], // all buy and sell records
-    stockPortfolio: [], // record of stocks currently owned
-    stockInfo: {}, // current market prices
-    redirectToHome: false
+    stockPortfolio: [], // record of stocks currently owned, used here to get current quotes
+    stockInfo: {}, // object storing all current market prices and company names
+    redirectToHome: false // bool used to redirect to home if user not logged in
   }
   // todo: add /tos and /privacy routes (required by Twitter login API)
 
@@ -92,7 +92,6 @@ class App extends Component {
         stockInfo[data.tickerSymbol] = { ...data };
       });
       const portfolioValue = this.state.stockPortfolio.reduce((totalVal, stock) => totalVal + Math.abs(stock.centsTotal), 0);
-      console.log('Setting portfolio Value to:', portfolioValue);
       this.setState({ stockInfo, portfolioValue });
     });
   }
