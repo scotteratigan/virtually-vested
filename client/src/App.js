@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Nav from './components/Nav/Nav';
 import StockHistory from './components/StockHistory/StockHistory';
 import Index from './pages/Index';
@@ -17,14 +17,13 @@ class App extends Component {
     portfolioValue: 0, // passed to portfolio page for display
     transactions: [], // all buy and sell records
     stockPortfolio: [], // record of stocks currently owned, used here to get current quotes
-    stockInfo: {}, // object storing all current market prices and company names
-    redirectToHome: false // bool used to redirect to home if user not logged in
+    stockInfo: {} // object storing all current market prices and company names
   }
 
   // todo: add /tos and /privacy routes (required by Twitter login API)
 
   logUserIn = (token, email) => {
-    this.setState({ userLoggedIn: true, user: { token, email }, redirectToHome: false }, () => {
+    this.setState({ userLoggedIn: true, user: { token, email } }, () => {
       console.log('Calling loadUserData with token:', this.state.user.token);
       this.loadUserData(this.state.user);
       this.loadUserTransactions(this.state.user.token);
@@ -46,10 +45,9 @@ class App extends Component {
         // console.log('cookie item is:', item);
         document.cookie = item + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/';
       });
-
-      // then re-route to landing page:
-      setTimeout(() => { this.setState({ redirectToHome: true }) }, 2000)
-      // this.setState({ redirectToHome: true });
+      window.location.href = window.location.hostname === 'localhost' ?
+        'https://scotte.auth0.com/v2/logout?returnTo=http://localhost:3000&client_id=fLrth2SyXCru10XKaJflwtXu-YZ7ecVU' :
+        'https://scotte.auth0.com/v2/logout?returnTo=https://virtuallyvested.herokuapp.com/&client_id=fLrth2SyXCru10XKaJflwtXu-YZ7ecVU';
     });
   }
 
@@ -134,9 +132,7 @@ class App extends Component {
     return (
       <Router>
         <>
-          {this.state.redirectToHome && window.location.pathname !== '/' ? <Redirect to='/' /> : null}
           {/* Pass login info to Nav to pass into login component */}
-          {/* <Nav userLoggedIn={this.state.userLoggedIn} userToken={this.state.userToken} logUserIn={this.logUserIn} /> */}
           <Nav userLoggedIn={this.state.userLoggedIn} user={this.state.user} logUserOut={this.logUserOut} />
           <Switch>
             <Route exact path='/' component={Index} />
