@@ -11,7 +11,10 @@ export default {
     return axios.get(`/api/transactions/${token}`);
   },
   getCurrentPrice: function (symbol) {
-    if (!symbol) return {};
+    if (!symbol) {
+      console.error('Error getting current stock price.');
+      return Promise.reject({});
+    }
     return axios.get(`/api/stock/quote/${symbol}`);
   },
   stockDailyHistory: function (symbol) {

@@ -58,7 +58,8 @@ module.exports = {
 
     // otherwise, proceed with trade:
     // todo: add error handling
-    await tradesArr.forEach(async (trade) => {
+    // todo: replace with bulkUpdate
+    tradesArr.forEach(async (trade) => {
       const centsTotal = trade.net * cachedStockQuotes[trade.symbol].price;
       console.log('Buying', trade);
       await db.Transactions.create({
@@ -70,12 +71,16 @@ module.exports = {
       console.log('Stock purchased.');
     });
 
-    db.User.update(
-      { cash: currCashCents - totalTradeCostCents },
-      { where: { 'token': submitToken } }
+    console.log('All stock transactions completed, now to subtract money...');
+    const newCashCents = currCashCents - totalTradeCostCents;
+    console.log('User\'s new cash total will be:', newCashCents);
+
+    db.User.findOneAndUpdate(
+      { token: submitToken },
+      { cash: newCashCents }
     )
       .then(result => {
-        console.log('User cash updated successfully.');
+        console.log('User cash update result:', result);
         return res.send('SUCCESS!!!');
       })
       .catch(err => {
@@ -83,8 +88,5 @@ module.exports = {
         return res.status(422).json('Error updating cash.');
       });
 
-
-    console.log('ERROR, should not get here');
-    // res.send('ERROR, should not get here.');
   }
 };
