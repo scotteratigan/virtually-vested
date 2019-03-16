@@ -15,7 +15,7 @@ class StockPortfolioItem extends Component {
   ttlValCents = this.currValCents * this.props.stock.quantity;
   netChange = this.ttlValCents - this.ttlCostBasisCents;
   pctChange = (((this.ttlValCents / this.ttlCostBasisCents) - 1) * 100).toFixed(2);
-  fmtPctChange = this.pctChange < 0 ? '- $' + Math.abs(this.pctChange).toString() : '+ $' + this.pctChange.toString();
+  fmtPctChange = this.pctChange < 0 ? '- %' + Math.abs(this.pctChange).toString() : '+ %' + this.pctChange.toString();
 
   calculateImpact = () => {
     const symbol = this.props.stock.tickerSymbol;

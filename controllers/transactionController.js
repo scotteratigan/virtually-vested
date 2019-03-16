@@ -44,7 +44,7 @@ module.exports = {
 
     // 3. if user tries to spend more money than they have, trade invalid
     console.log('stock quotes:', cachedStockQuotes);
-    // note: totalTradeCostCents is positive when we're spending and negative when we're earning for selling
+    // note: totalTradeCostCents is positive when we're buying and negative when we're selling
     const totalTradeCostCents = tradesArr.reduce((totalCost, trade) => {
       console.log('Analzing trade cost, trade is:', trade);
       const cost = trade.net * cachedStockQuotes[trade.symbol].price;
@@ -60,8 +60,9 @@ module.exports = {
     // todo: add error handling
     // todo: replace with bulkUpdate
     tradesArr.forEach(async (trade) => {
-      const centsTotal = trade.net * cachedStockQuotes[trade.symbol].price;
-      console.log('Buying', trade);
+      let centsTotal = Math.abs(trade.net * cachedStockQuotes[trade.symbol].price);
+      if (trade.net > 0) centsTotal *= -1; // if we're selling stock, the cost is negative
+      console.log('Buying or Selling:', trade);
       await db.Transactions.create({
         'token': submitToken,
         'tickerSymbol': trade.symbol,
