@@ -47,8 +47,18 @@ class Portfolio extends Component {
   }
 
   componentDidUpdate = prevProps => {
+    // re-render if list of stocks is a different length:
     if (prevProps.stockPortfolio.length != this.props.stockPortfolio.length) {
       this.loadPortfolioData(); // todo: also detect small changes in quantities
+      return;
+    }
+    // re-render if any quantity in list has changed, or stock ticker symbols don't match:
+    for (let i = 0; i < prevProps.stockPortfolio.length; i++) {
+      if (prevProps.stockPortfolio[i].quantity !== this.props.stockPortfolio[i].quantity ||
+        prevProps.stockPortfolio[i].tickerSymbol !== this.props.stockPortfolio[i].tickerSymbol) {
+        this.loadPortfolioData(); // todo: what if 
+        return;
+      }
     }
   }
 
