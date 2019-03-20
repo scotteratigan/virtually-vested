@@ -52,7 +52,7 @@ class DailyHistory extends PureComponent {
           <br />
           <LineChart
             className='mx-auto'
-            width={Math.floor(this.state.width * .9)} height={500}
+            width={Math.floor(this.state.width * .85)} height={Math.floor(this.state.height * .5)}
             data={this.state.series}
             margin={{
               top: 5, right: 30, left: 20, bottom: 5,

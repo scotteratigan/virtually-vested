@@ -8,10 +8,6 @@ import Research from '../images/img6.jpg';
 import Logo from '../images/logo.png';
 import { Col, Row, Container } from '../components/Grid';
 import { Link } from 'react-router-dom';
-import LogIn from '../components/LogIn/LogIn';
-import LogOut from '../components/LogOut/LogOut';
-
-const anchorRef = React.createRef(LogIn);
 
 class Index extends Component {
   render() {
@@ -30,10 +26,12 @@ class Index extends Component {
               <span style={{ float: 'none', padding: '30px' }}>
                 <Link to='/portfolio'>
                   <h3 style={{ color: 'white', textShadow: '0 0 3px green', textDecoration: 'underline', padding: '10px' }}>Begin New Simulation</h3>
-                  <img src={Start} style={{ backgroundColor: 'black', padding: '20px' }} alt='Start' /><br />
+                  <h1 className='display-1 text-danger'>
+                    <i className='fas fa-chart-line'></i>
+                  </h1>
                 </Link>
               </span>
-              <span style={{ display: 'block', float: 'left', padding: '40px' }}>
+              {/* <span style={{ display: 'block', float: 'left', padding: '40px' }}>
                 <h3 style={{ textShadow: '0 0 3px green', textDecoration: 'underline' }}>Manage my Portfolio</h3>
                 <img src={Manage} style={{ backgroundColor: 'white' }} alt='Manage' /><br />
               </span>
@@ -42,7 +40,7 @@ class Index extends Component {
                   <h3 style={{ textShadow: '0 0 3px green', textDecoration: 'underline' }}>Research</h3>
                   <img src={Research} style={{ backgroundColor: 'white' }} alt='Research' /><br />
                 </Link>
-              </span>
+              </span> */}
             </div>
           </Col>
         </Row>

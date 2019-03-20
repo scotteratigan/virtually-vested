@@ -20,7 +20,7 @@ class LogIn extends Component {
       <div>
         {/* todo: use actual token in future? */}
         {/* <button onClick={() => this.props.logUserIn('first user')}>Log In</button> */}
-        <button onClick={() => this.logIn()}>Log In</button>
+        <button className='btn btn-secondary' onClick={() => this.logIn()}>Log In</button>
       </div>
     );
   }

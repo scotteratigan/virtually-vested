@@ -19,41 +19,45 @@ class StockPortfolioCounter extends Component {
 
   render() {
     return (
-      <>
+      <div className='mx-auto'>
         {/* todo: force buy/sell on same line */}
-        <Row className='btn-group btn-group-toggle' data-toggle='buttons' style={{display: 'inline-block', overflow: 'hidden' }}>
-          <Col size='sm-6' className='text-center' style={{ margin: '1rem' }}>
+        <Row className='btn-group btn-group-toggle mx-auto' data-toggle='buttons'>
+          <Col size='6' className='text-center mx-0'>
             <button onClick={this.handleBuyClick}
-              className={this.state.buyMode ? 'btn btn-primary btn-sm' : 'btn btn-outline-info btn-sm'} style={{ marginRight: '-5px', marginBottom: '5px'}}>
+              className={this.state.buyMode ? 'btn btn-primary btn-sm' : 'btn btn-outline-info btn-sm'}>
               Buy
             </button>
           </Col>
-          <Col size='sm-6' className='text-center' style={{ margin: '1rem' }}>
+          <Col size='6' className='text-center mx-0'>
             <button onClick={this.handleSellClick}
-              className={!this.state.buyMode ? 'btn btn-primary btn-sm' : 'btn btn-outline-info btn-sm'} style={{ marginLeft: '-5px', marginBottom: '10px'}}>
+              className={!this.state.buyMode ? 'btn btn-primary btn-sm' : 'btn btn-outline-info btn-sm'}>
               Sell
             </button>
           </Col>
         </Row>
-        <Row className='text-center counter'>
-          <Col size='sm-4'>
+        <Row className='text-center mt-1'>
+          <Col size='4' className='text-center'>
             {/* decrement button: */}
             <button className='btn-outline-danger btn-sm' onClick={() => this.props.handleQtyChange(this.props.index, '-')}>
               <i className='fas fa-xs fa-minus' />
             </button>
           </Col>
-          <Col size='sm-4' style={{display: 'inline', overflow: 'hidden' }} className='counter-score'>
+          <Col size='4' className=''>
             {/* netShareChange display: */}
-            {Math.abs(this.props.workingPortfolio[this.props.index].netShareChange)}
+            <div className='text-center'>
+              <strong>
+                {Math.abs(this.props.workingPortfolio[this.props.index].netShareChange)}
+              </strong>
+            </div>
           </Col>
-          <Col size='sm-4'  >
+          <Col size='4' className='text-center'>
             {/* increment button: */}
-            <button className='btn-outline-success btn-sm' style={{ marginLeft: '-10px' }} onClick={() => this.props.handleQtyChange(this.props.index, '+')}>
+            <button className='btn-outline-success btn-sm' onClick={() => this.props.handleQtyChange(this.props.index, '+')}>
               <i className='fas fa-xs fa-plus' />
             </button>
           </Col>
         </Row>
-      </>
+      </div>
     );
   }
 }

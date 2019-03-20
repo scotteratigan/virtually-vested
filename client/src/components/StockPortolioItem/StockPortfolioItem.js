@@ -84,30 +84,30 @@ class StockPortfolioItem extends Component {
           {/* current stock price: */}
           {formatCash(this.state.currValCents)}
         </td>
-        <td className='text-right'>
+        <td className='d-none d-md-table-cell text-right'>
           {/* current value (price * quantity owned) */}
           {this.props.stock.quantity > 0 ? formatCash(this.state.ttlValCents) : 'n/a'}
         </td>
-        <td className='text-right'>
+        <td className='d-none d-md-table-cell text-right'>
           {/* cost basis (original cost per share - needs to be calculated, only total cost basis is stored in db) */}
           {this.props.stock.quantity > 0 ? formatCash(this.state.ttlCostBasisCents / this.props.stock.quantity) : 'n/a'}
         </td>
-        <td className='text-right'>
+        <td className='d-none d-md-table-cell text-right'>
           {/* cost basis, total */}
           {this.props.stock.quantity > 0 ? formatCash(this.state.ttlCostBasisCents) : 'n/a'}
         </td>
-        <td className='text-right'>
+        <td className='d-none d-md-table-cell text-right'>
           {/* total gain/loss */}
           {this.props.stock.quantity > 0 ? formatCash(this.state.netChange) : 'n/a'}
         </td>
-        <td className='text-right'>
+        <td className='d-none d-md-table-cell text-right'>
           {/* total gain/loss */}
           {this.props.stock.quantity > 0 ? this.state.fmtPctChange : 'n/a'}
         </td>
-        <td>
+        <td style={{ width: 150 }}>
           <StockPortfolioCounter workingPortfolio={this.props.workingPortfolio} index={this.props.index} handleQtyChange={this.props.handleQtyChange} />
         </td>
-        <td className='text-right'>
+        <td className='d-none d-md-table-cell ext-right'>
           {this.calculateImpact()}
         </td>
       </tr >

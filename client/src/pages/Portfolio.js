@@ -107,11 +107,8 @@ class Portfolio extends Component {
             {/* <h1>Stock Portfolio</h1> */}
             <h4>{this.props.user.email}</h4>
             <Row>
-              <Col size='sm-6 md-3 lg-2' className='text-right'>
-                Initial Investment:
-            </Col>
-              <Col size='sm-6 md-3 lg-2' className='text-left'>
-                {formatCash(this.props.user.startingCash)}
+              <Col size='sm-12 md-6 lg-4'>
+                Initial Investment: {formatCash(this.props.user.startingCash)}
               </Col>
               <Col size='sm-12 md-6 lg-4'>
                 Portfolio Value: {formatCash(this.props.portfolioValue)}
@@ -119,8 +116,6 @@ class Portfolio extends Component {
               <Col size='sm-12 md-6 lg-4'>
                 Cash: {formatCash(this.props.user.cash)}
               </Col>
-            </Row>
-            <Row>
               <Col size='sm-12 md-6 lg-4'>
                 Current Total (portfolio + cash): {formatCash(this.props.user.cash + this.props.portfolioValue)}
               </Col>
@@ -141,16 +136,16 @@ class Portfolio extends Component {
             <table className='table table-bordered table-hover table-sm'>
               <thead className='thead-dark'>
                 <tr>
-                  <th scope='col' className='text-center'>Symbol<br />Company Name</th>
+                  <th scope='col' className='text-center'>Symbol & Company Name</th>
                   <th scope='col' className='text-right'>Qty</th>
                   <th scope='col' className='text-right'>Current Price / Share</th>
-                  <th scope='col' className='text-right'>Current Value</th>
-                  <th scope='col' className='text-right'>Cost Basis per Share</th>
-                  <th scope='col' className='text-right'>Total Cost Basis</th>
-                  <th scope='col' className='text-right'>Total Gain/Loss</th>
-                  <th scope='col' className='text-center'>% Total Gain/Loss</th>
+                  <th scope='col' className='d-none d-md-table-cell text-right'>Current Value</th>
+                  <th scope='col' className='d-none d-md-table-cell text-right'>Cost Basis per Share</th>
+                  <th scope='col' className='d-none d-md-table-cell text-right'>Total Cost Basis</th>
+                  <th scope='col' className='d-none d-md-table-cell text-right'>Total Gain / Loss</th>
+                  <th scope='col' className='d-none d-md-table-cell text-center'>% Total Gain / Loss</th>
                   <th scope='col' className='text-center'>Modify</th>
-                  <th scope='col' className='text-right'>Cash Impact</th>
+                  <th scope='col' className='d-none d-md-table-cell text-right'>Cash Impact</th>
                 </tr>
               </thead>
               <tbody>
