@@ -94,6 +94,7 @@ class Portfolio extends Component {
     const submitData = this.state.workingPortfolio
       .filter(stock => stock.netShareChange !== 0)
       .map(stock => ({ symbol: stock.tickerSymbol, net: stock.netShareChange }));
+    console.log('submitting trade:', submitData)
     this.props.submitTrade(submitData);
   }
 
@@ -157,7 +158,7 @@ class Portfolio extends Component {
             </table>
             <SearchStocks clickFunction={this.addStockToPortfolio} buttonLabel='Add Stock to Portfolio' prompt='Stock to add' />
             {/* <Button variant='outline-success' size='lg' block style={{ margin: '1rem' }} onClick={() => this.formatTradeData()}>Make Trade!</Button> */}
-            <Button variant='outline-success' size='lg' block style={{ maxWidth: '800px', float: 'left', marginBottom: '20px' }} onClick={() => this.formatTradeData()}>Make Trade!</Button>
+            <Button variant='outline-success' size='lg' className='mb-3 mx-auto' block style={{ maxWidth: '800px' }} onClick={() => this.formatTradeData()}>Make Trade!</Button>
           </>
         </Container>
         <Footer />

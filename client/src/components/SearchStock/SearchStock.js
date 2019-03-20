@@ -15,7 +15,7 @@ class SearchStocks extends Component {
 		let companyName = '';
 		// if there's a '-', strip out the company name:
 		if (this.state.searchTerm.includes('-')) {
-			searchSymbol = searchSymbol.substring(0, searchSymbol.indexOf('-'), -1);
+			searchSymbol = searchSymbol.substring(0, searchSymbol.indexOf('-'), -1).trim();
 			// if we have searched out the company name, grab that now too:
 			companyName = this.state.searchTerm.substring(this.state.searchTerm.indexOf('-') + 1);
 		}
