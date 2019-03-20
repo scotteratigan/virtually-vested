@@ -9,17 +9,32 @@ import SearchStocks from '../SearchStock/SearchStock';
 class DailyHistory extends PureComponent {
   state = {
     symbol: this.props.location.state && this.props.location.state.tickerSymbol ? this.props.location.state.tickerSymbol : 'MSFT',
-    series: []
+    companyName: this.props.location.state && this.props.location.state.companyName ? this.props.location.state.companyName : 'Microsoft Corp.',
+    series: [],
+    width: 0,
+    height: 0
   }
   componentDidMount = () => {
+    this.updateWindowDimensions();
+    window.addEventListener('resize', this.updateWindowDimensions);
     if (this.state.symbol) this.displayGraph();
   }
+
+  componentWillUnmount = () => {
+    window.removeEventListener('resize', this.updateWindowDimensions);
+  }
+
+  updateWindowDimensions = () => {
+    this.setState({ width: window.innerWidth, height: window.innerHeight });
+  }
+
   displayGraph = async () => {
     const res = await API.stockDailyHistory(this.state.symbol);
     this.setState({ series: res.data });
   }
-  handleAddStock = newTickerSymbol => {
-    this.setState({ symbol: newTickerSymbol }, () => this.displayGraph());
+  handleAddStock = (newTickerSymbol, companyName) => {
+    console.log('handlingAddStock, args are:', newTickerSymbol, companyName);
+    this.setState({ symbol: newTickerSymbol, companyName }, () => this.displayGraph());
   }
 
   render() {
@@ -27,12 +42,17 @@ class DailyHistory extends PureComponent {
       <>
         <div className='container-fluid'>
           <br />
-          <h1 style={{ marginInlineStart: '250px' }}>
-            History for: {this.state.symbol}
+          {/* <h1 style={{ marginInlineStart: '250px' }}> */}
+          <h1 className='text-center'>
+            6 Month Daily Close Price
           </h1>
+          <h2 className='text-center'>
+            {this.state.symbol} - {this.state.companyName}
+          </h2>
           <br />
           <LineChart
-            width={800} height={500}
+            className='mx-auto'
+            width={Math.floor(this.state.width * .9)} height={500}
             data={this.state.series}
             margin={{
               top: 5, right: 30, left: 20, bottom: 5,

@@ -68,14 +68,13 @@ class StockPortfolioItem extends Component {
           <Link to={{
             pathname: '/stockhistory',
             state: {
-              tickerSymbol: this.props.stock.tickerSymbol
+              tickerSymbol: this.props.stock.tickerSymbol,
+              companyName: this.props.stockInfo[this.props.stock.tickerSymbol].companyName
             }
           }}>{this.props.stock.tickerSymbol}</Link>
 
           <br />
-          {/* link to company news: */}
-          {/*  */}
-          <a href={`https://news.google.com/search?q=${this.getLink()}`} target='blank'>{this.getLink() + ' News'}</a>
+          <a href={`https://news.google.com/search?q=${this.getLink()}`} target='blank'>{this.getLink()}</a>
         </td>
         <td className='text-right'>
           {/* quantity: */}

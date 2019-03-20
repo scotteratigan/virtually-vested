@@ -157,6 +157,12 @@ class App extends Component {
                 user={this.state.user} />}
             />
             <Route exact path='/stockhistory' component={StockHistory} />
+            {/* below method won't work if we don't view porfolio: */}
+            {/* <Route
+              path='/stockhistory'
+              render={(props) => <StockHistory {...props}
+                stockInfo={this.state.stockInfo} />}
+            /> */}
             <Route exact path='/signup' component={SignUp} />
             <Route
               path='/loggedin'

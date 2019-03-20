@@ -161,7 +161,8 @@ class Portfolio extends Component {
               </tbody>
             </table>
             <SearchStocks clickFunction={this.addStockToPortfolio} buttonLabel='Add Stock to Portfolio' prompt='Stock to add' />
-            <Button variant='outline-success' size='lg' block style={{ margin: '1rem' }} onClick={() => this.formatTradeData()}>Make Trade!</Button>
+            {/* <Button variant='outline-success' size='lg' block style={{ margin: '1rem' }} onClick={() => this.formatTradeData()}>Make Trade!</Button> */}
+            <Button variant='outline-success' size='lg' block style={{ maxWidth: '800px', float: 'left', marginBottom: '20px' }} onClick={() => this.formatTradeData()}>Make Trade!</Button>
           </>
         </Container>
         <Footer />

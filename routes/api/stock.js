@@ -10,23 +10,29 @@ const IEXAPIS_API_KEY = process.env.IEXAPIS_API_KEY;
 const cachedSymbolQueries = {};
 // todo: add limit on number of cached queries
 // global to hold stock info (prices, company names):
-const cachedStockQuotes = {};
-// console.log('TODO: REMOVE HARD-CODING OF STOCK VALUES!')
+// const cachedStockQuotes = {};
 // temporarily hard coding these values so I don't get throttled anymore:
-// const cachedStockQuotes = {
-//   TSLA: {
-//     companyName: "Tesla, Inc.",
-//     price: 27543,
-//     tickerSymbol: "TSLA",
-//     updateTime: Date.now()
-//   },
-//   AAPL: {
-//     companyName: "Apple, Inc.",
-//     price: 18612,
-//     tickerSymbol: "AAPL",
-//     updateTime: Date.now()
-//   }
-// }
+console.log('TODO: REMOVE HARD-CODING OF STOCK VALUES!')
+const cachedStockQuotes = {
+  TSLA: {
+    companyName: "Tesla, Inc.",
+    price: 27543,
+    tickerSymbol: "TSLA",
+    updateTime: Date.now()
+  },
+  AAPL: {
+    companyName: "Apple, Inc.",
+    price: 18612,
+    tickerSymbol: "AAPL",
+    updateTime: Date.now()
+  },
+  MS: {
+    companyName: "Morgan Stanley News",
+    price: 4395,
+    tickerSymbol: "MS",
+    updateTime: Date.now()
+  }
+}
 
 // Matches with '/api/stock/return_symbols/t' where t is the user input
 // This is the search route to look up stock symbols
