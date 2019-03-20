@@ -36,7 +36,7 @@ class SearchStocks extends Component {
 			<form className="search">
 				<div className="form-group">
 					<label htmlFor="company" style={{ fontWeight: 'bold' }}>{this.props.prompt}:</label>
-					<input
+					<input style={{ maxWidth: '450px'}}
 						value={this.state.searchTerm}
 						onChange={this.handleKeyInput}
 						name="company"

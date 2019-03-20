@@ -150,11 +150,36 @@ class Portfolio extends Component {
                 </tbody>
               </table>
               <SearchStocks clickFunction={this.addStockToPortfolio} buttonLabel='Add Stock to Portfolio' prompt='Stock to add' />
-              <Button variant='outline-success' size='lg' block style={{ margin: '1rem' }} onClick={() => this.formatTradeData()}>Make Trade!</Button>
+              <Button variant='outline-success' size='lg' block style={{ maxWidth: '800px', float: 'left', marginBottom: '20px' }} onClick={() => this.formatTradeData()}>Make Trade!</Button>
             </>
-          ) : (
+          ) : (  <>
+              <table className='table table-bordered table-hover table-sm'>
+                <thead className='thead-dark'>
+                  <tr>
+                    <th scope='col' className='text-center'>Symbol<br />Company Name</th>
+                    <th scope='col' className='text-right'>Qty</th>
+                    <th scope='col' className='text-right'>Current Price / Share</th>
+                    <th scope='col' className='text-right'>Current Value</th>
+                    <th scope='col' className='text-right'>Cost Basis per Share</th>
+                    <th scope='col' className='text-right'>Total Cost Basis</th>
+                    <th scope='col' className='text-right'>Total Gain/Loss</th>
+                    <th scope='col' className='text-center'>% Total Gain/Loss</th>
+                    <th scope='col' className='text-center'>Modify</th>
+                    <th scope='col' className='text-right'>Cash Impact</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {this.state.workingPortfolio.map((stock, index) => (
+                    <StockPortfolioItem key={stock.tickerSymbol} stock={stock} index={index} stockInfo={this.props.stockInfo} rerenderStockInfo={this.props.rerenderStockInfo}
+                      workingPortfolio={this.state.workingPortfolio} handleQtyChange={this.handleQtyChange} />
+                  ))}
+                </tbody>
+              </table>
+              <SearchStocks clickFunction={this.addStockToPortfolio} buttonLabel='Add Stock to Portfolio' prompt='Stock to add' />
+              <Button variant='outline-success' size='lg' block style={{ maxWidth: '800px', float: 'left', marginBottom: '20px' }} onClick={() => this.formatTradeData()}>Make Trade!</Button>
+            </>
               // todo: timeout at some point?
-              <h3>Loading data...</h3>
+              // <h3>Loading data...</h3>
             )}
 
         </Container>
