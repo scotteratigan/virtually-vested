@@ -22,7 +22,7 @@
   "dependencies": {
     "auth0": "^2.14.0",
     "auth0-js": "^9.10.0",
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "bcrypt": "^3.0.4",
     "circular-json": "^0.5.9",
     "dotenv": "^6.2.0",
